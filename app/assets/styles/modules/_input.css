@@ -1,0 +1,12 @@
+.input {
+	display: inline-block;
+
+	&__text {
+		display: inline-block;
+	}
+
+	&__field {
+		display: inline-block;
+		height: 1.7rem;
+	}
+}
