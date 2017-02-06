@@ -2,10 +2,13 @@
   "name": "riko-baza-cen",
   "version": "1.0.0",
   "dependencies": {
+    "fs": "0.0.1-security",
+    "http": "0.0.0",
     "jquery": "^2.2.4",
     "jquery-smooth-scroll": "^2.0.0",
     "lazysizes": "^3.0.0-rc3",
     "normalize.css": "^4.1.1",
+    "pg": "^6.1.2",
     "picturefill": "^3.0.2",
     "waypoints": "^4.0.0"
   },

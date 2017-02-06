@@ -1,4 +1,4 @@
-var gulp = require('gulp')
+var gulp = require('gulp'),
 imagemin = require('gulp-imagemin'),
 del = require('del'),
 usemin = require('gulp-usemin'),
@@ -16,7 +16,7 @@ gulp.task('previewDocs', function() {
   });
 });
 
-gulp.task('deleteDocsFolder',['icons'], function() {
+gulp.task('deleteDocsFolder', function() {
 	return del("./docs");
 });
 
@@ -35,15 +35,6 @@ gulp.task('copyGeneralFiles', ['deleteDocsFolder'], function() {
 		.pipe(gulp.dest("./docs"))
 })
 
-gulp.task('optimizeImages', ['deleteDocsFolder'], function() {
-	return gulp.src(['./app/assets/images/**/*', '!./app/assets/images/icons', '!./app/assets/images/icons/**/*'])
-		.pipe(imagemin({
-			progressive: true,
-			interlaced: true,
-			multipass: true
-		}))
-		.pipe(gulp.dest("./docs/assets/images"));
-});
 
 gulp.task('useminTrigger', ['deleteDocsFolder'], function() {
 	gulp.start("usemin");
@@ -64,4 +55,4 @@ gulp.task('usemin', ['styles', 'scripts'], function() {
 	.pipe(gulp.dest("./docs"));
 });
 
-gulp.task('build', ['deleteDocsFolder', 'copyGeneralFiles', 'optimizeImages', 'useminTrigger']);
+gulp.task('build', ['deleteDocsFolder', 'copyGeneralFiles', 'useminTrigger']);
