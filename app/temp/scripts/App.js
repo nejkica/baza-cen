@@ -9921,9 +9921,10 @@
 	      this.ajaxBtn.click(function () {
 	        console.log('delam');
 	        _jquery2.default.ajax({
-	          url: "http://localhost/ajaxtle",
+	          url: "http://localhost/sql/" + (0, _jquery2.default)(".input__field").val(),
 	          success: function success(result) {
 	            console.log(result);
+	            (0, _jquery2.default)("#rezultat").html("<p>result</p>");
 	          }
 	        });
 	      });

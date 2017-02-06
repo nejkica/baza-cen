@@ -628,6 +628,14 @@ a {
 }
 
 .row__header {
+  display: inline-block;
   background-color: rgba(21,255,0, .5);
+  min-width: 1200px;
+}
+
+.row__results {
+  display: inline-block;
+  background-color: #d59541;
+  min-height: 50px;
   min-width: 1200px;
 }

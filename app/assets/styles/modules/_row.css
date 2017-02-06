@@ -6,7 +6,15 @@
 	}
 
 	&__header {
+		display: inline-block;
 		background-color: rgba($mainGreen, .5);
+		min-width: 1200px;
+	}
+
+	&__results {
+		display: inline-block;
+		background-color: $mainOrange;
+		min-height: 50px;
 		min-width: 1200px;
 	}
 }

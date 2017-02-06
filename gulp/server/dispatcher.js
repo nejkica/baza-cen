@@ -1,4 +1,5 @@
 var fs = require('fs');
+var Psql = require('./psql');
 
 this.dispatch = function(req, res) {
 
@@ -37,10 +38,6 @@ var renderCSS = function(content) {
   var parts = req.url.split('/');
   //console.log(parts);
 
-  var ajaxtleVar=parts[1].split('&');
-  //console.log(ajaxtleVar);
-
-
 
   if (req.url == "/") {
     fs.readFile('../../docs/index.html', function(error, content) {
@@ -52,10 +49,15 @@ var renderCSS = function(content) {
       }
     });
 
-  } else if (ajaxtleVar[0]=='ajaxtle') {
+  } else if (parts[1]=='sql') {
     try {
 
-      var content = "test";
+      var webVnos = parts[2];
+      var psql = new Psql();
+
+
+      var content = psql.poizvedba(webVnos);
+      console.log(content);
       //console.log(content);
       renderAjax(content);
       //console.log('pošiljam ajax');
