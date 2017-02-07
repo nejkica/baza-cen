@@ -9923,7 +9923,10 @@
 				this.inputOpis.keyup(function () {
 					//  		console.log('delam');
 					var vpisanaVrednost = (0, _jquery2.default)(".input__field").val();
-					console.log(vpisanaVrednost);
+					var vpisanaVrednostArr = vpisanaVrednost.split(" ");
+					console.log(vpisanaVrednostArr);
+					//console.log(vpisanaVrednost);
+
 					if (vpisanaVrednost.length > 2) {
 						_jquery2.default.ajax({
 							url: "http://localhost/sql/" + vpisanaVrednost,
@@ -9946,7 +9949,6 @@
 
 									var m = 0;
 									Object.values(item).forEach(function (value) {
-										//console.log(value);
 										var idVrstice = "#row-" + index;
 
 										//console.log(value);
@@ -9955,10 +9957,13 @@
 										var selTd = '.table--td--' + Object.keys(item)[m] + '-' + index;
 
 										if (selTd.indexOf("Opis") >= 0) {
-											var strBeg = value.indexOf(vpisanaVrednost);
-											var iskaniStr = new RegExp(vpisanaVrednost, 'g');
-											var zamenjajZ = '<span>' + vpisanaVrednost + '</span>';
-											value = value.replace(iskaniStr, zamenjajZ);
+
+											for (var i = 0; i < vpisanaVrednostArr.length; i++) {
+												//console.log(vpisanaVrednostArr[i]);
+												var iskaniStr = vpisanaVrednostArr[i];
+												var zamenjajZ = '<span>' + vpisanaVrednostArr[i] + '</span>';
+												value = value.replace(iskaniStr, zamenjajZ);
+											}
 										}
 
 										(0, _jquery2.default)(selTd).append(value);

@@ -55,11 +55,11 @@ var renderCSS = function(content) {
 
       var webVnos = parts[2];
       var rezul = "";
-      //var psql = new Psql();
+      //Pregledamo za ČŽŠ
 
       Psql.Psql(webVnos, function(rezultatQ) {
         //rezul = rezultatQ;
-        console.log(rezultatQ);
+        //console.log(rezultatQ);
         renderAjax(rezultatQ);
 
       });
