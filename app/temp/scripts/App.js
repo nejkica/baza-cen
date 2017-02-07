@@ -9888,10 +9888,10 @@
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+		value: true
 	});
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -9905,33 +9905,77 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var Ajax = function () {
-	  function Ajax() {
-	    _classCallCheck(this, Ajax);
+		function Ajax() {
+			_classCallCheck(this, Ajax);
 
-	    this.ajaxBtn = (0, _jquery2.default)(".btn");
-	    this.izvajanje();
-	    console.log('delam');
-	  }
+			this.ajaxBtn = (0, _jquery2.default)(".btn");
+			this.inputOpis = (0, _jquery2.default)(".input__field");
+			this.izvajanje();
+			console.log('delam');
+		}
 
-	  _createClass(Ajax, [{
-	    key: 'izvajanje',
-	    value: function izvajanje() {
-	      //to še nič ne dela
+		_createClass(Ajax, [{
+			key: "izvajanje",
+			value: function izvajanje() {
+				//to še nič ne dela
 
-	      this.ajaxBtn.click(function () {
-	        console.log('delam');
-	        _jquery2.default.ajax({
-	          url: "http://localhost/sql/" + (0, _jquery2.default)(".input__field").val(),
-	          success: function success(result) {
-	            console.log(result);
-	            (0, _jquery2.default)("#rezultat").html("<p>result</p>");
-	          }
-	        });
-	      });
-	    }
-	  }]);
+				//  	this.ajaxBtn.click(function() {
+				this.inputOpis.keyup(function () {
+					//  		console.log('delam');
+					var vpisanaVrednost = (0, _jquery2.default)(".input__field").val();
+					console.log(vpisanaVrednost);
+					if (vpisanaVrednost.length > 2) {
+						_jquery2.default.ajax({
+							url: "http://localhost/sql/" + vpisanaVrednost,
+							success: function success(result) {
+								var rezultat = JSON.parse(result);
 
-	  return Ajax;
+								//najprej izpis glave
+								(0, _jquery2.default)('#t-naslovna-vrstica').empty();
+								(0, _jquery2.default)('#t-body').empty();
+								Object.keys(rezultat[0]).forEach(function (k) {
+
+									(0, _jquery2.default)('#t-naslovna-vrstica').append('<th class="table--header--th">' + k + '</th>');
+								});
+
+								//potem izpis rezultatov
+								//console.log(Object.values(rezultat));
+								_jquery2.default.each(rezultat, function (index, item) {
+									(0, _jquery2.default)('#t-body').append('<tr class="table--body--row" id="row-' + index + '"></tr>');
+									//console.log(index + ' ' + Object.values(item));
+
+									var m = 0;
+									Object.values(item).forEach(function (value) {
+										//console.log(value);
+										var idVrstice = "#row-" + index;
+
+										//console.log(value);
+										(0, _jquery2.default)(idVrstice).append('<td class="table--td--' + Object.keys(item)[m] + '-' + index + '"></td>');
+										//console.log(Object.keys(item)[m]);
+										var selTd = '.table--td--' + Object.keys(item)[m] + '-' + index;
+
+										if (selTd.indexOf("Opis") >= 0) {
+											var strBeg = value.indexOf(vpisanaVrednost);
+											var iskaniStr = new RegExp(vpisanaVrednost, 'g');
+											var zamenjajZ = '<span>' + vpisanaVrednost + '</span>';
+											value = value.replace(iskaniStr, zamenjajZ);
+										}
+
+										(0, _jquery2.default)(selTd).append(value);
+
+										m += 1;
+									});
+								});
+							}
+						});
+					} else {
+						(0, _jquery2.default)('#t-body').empty();
+					}
+				});
+			}
+		}]);
+
+		return Ajax;
 	}();
 
 	exports.default = Ajax;

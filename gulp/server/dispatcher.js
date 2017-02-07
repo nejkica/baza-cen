@@ -1,5 +1,6 @@
 var fs = require('fs');
 var Psql = require('./psql');
+//var psql = new Psql();
 
 this.dispatch = function(req, res) {
 
@@ -40,7 +41,7 @@ var renderCSS = function(content) {
 
 
   if (req.url == "/") {
-    fs.readFile('../../docs/index.html', function(error, content) {
+    fs.readFile('app/index.html', function(error, content) {
       if (error) {
         console.log('pošiljam 500 - 1');
         serverError(500);
@@ -53,14 +54,16 @@ var renderCSS = function(content) {
     try {
 
       var webVnos = parts[2];
-      var psql = new Psql();
+      var rezul = "";
+      //var psql = new Psql();
 
+      Psql.Psql(webVnos, function(rezultatQ) {
+        //rezul = rezultatQ;
+        console.log(rezultatQ);
+        renderAjax(rezultatQ);
 
-      var content = psql.poizvedba(webVnos);
-      console.log(content);
-      //console.log(content);
-      renderAjax(content);
-      //console.log('pošiljam ajax');
+      });
+
 
     } catch (err) {
       //handle errors gracefully
@@ -69,12 +72,10 @@ var renderCSS = function(content) {
     }
     
   } else {
-    //var prvi   = parts[0];
+
     var drugi = req.url;
 
-    //console.log(drugi);
-
-    fs.readFile('../../docs'+drugi, function(error, content) {
+    fs.readFile('app'+drugi, function(error, content) {
       if (error) {
         console.log('pošiljam 500 - 3 ../../docs'+drugi);
         serverError(500);
