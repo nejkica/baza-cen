@@ -9911,7 +9911,7 @@
 			this.ajaxBtn = (0, _jquery2.default)(".btn");
 			this.inputOpis = (0, _jquery2.default)(".input__field");
 			this.izvajanje();
-			console.log('delam');
+			//console.log('delam');
 		}
 
 		_createClass(Ajax, [{
@@ -9924,7 +9924,7 @@
 					//  		console.log('delam');
 					var vpisanaVrednost = (0, _jquery2.default)(".input__field").val();
 					var vpisanaVrednostArr = vpisanaVrednost.split(" ");
-					console.log(vpisanaVrednostArr);
+					//console.log(vpisanaVrednostArr);
 					//console.log(vpisanaVrednost);
 
 					if (vpisanaVrednost.length > 2) {

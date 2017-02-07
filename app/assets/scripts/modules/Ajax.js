@@ -6,7 +6,7 @@ class Ajax {
 		this.ajaxBtn = $(".btn");
 		this.inputOpis = $(".input__field");
 		this.izvajanje();
-		console.log('delam');
+		//console.log('delam');
 	}
    
   izvajanje() { //to še nič ne dela
@@ -16,7 +16,7 @@ class Ajax {
 //  		console.log('delam');
   		var vpisanaVrednost = $(".input__field").val();
   		var vpisanaVrednostArr = vpisanaVrednost.split(" ");
-			console.log(vpisanaVrednostArr);
+			//console.log(vpisanaVrednostArr);
   		//console.log(vpisanaVrednost);
 
   		if (vpisanaVrednost.length > 2) {

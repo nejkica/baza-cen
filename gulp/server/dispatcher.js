@@ -55,8 +55,14 @@ var renderCSS = function(content) {
 
       var webVnos = parts[2];
       var rezul = "";
-      //Pregledamo za ČŽŠ
-
+      //Pregledamo za ČŽŠ %C4%8D %C5%BE %C5%A1
+      var re = new RegExp("%C5%A1", 'g');
+      webVnos = webVnos.replace(re, 'š');
+      var re = new RegExp("%C5%BE", 'g');
+      webVnos = webVnos.replace(re, 'ž');
+      var re = new RegExp("%C4%8D", 'g');
+      webVnos = webVnos.replace(re, 'č');
+      //console.log(webVnos);
       Psql.Psql(webVnos, function(rezultatQ) {
         //rezul = rezultatQ;
         //console.log(rezultatQ);
