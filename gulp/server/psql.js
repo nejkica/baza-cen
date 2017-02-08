@@ -20,7 +20,7 @@ function Psql(vnos, callback) {
 		vnosArrSQL.push("%" + vnosArr[i] + "%");
 	}
 
-	sqlQ += " ORDER BY \"Opis\""
+	sqlQ += " ORDER BY \"Opis\" LIMIT 200"
 	//console.log(sqlQ);
 	var sqlVnos = "%" + vnos + "%";
 

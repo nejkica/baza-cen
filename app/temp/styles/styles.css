@@ -561,7 +561,6 @@ a {
   z-index: 1;
 
 
-
 }
 
 @media (min-width: 800px) {
@@ -596,9 +595,34 @@ a {
 
 .site-header__elements {
   position: relative;
-  float: right;
-  padding: 10px 0;
+  display: inline-block;
+  margin: 0;
 }
+
+.site-header__elements_div {
+  padding: 14px 0;
+  float: right;
+}
+
+.site-header__elements__input {
+  padding: 0;
+}
+
+.site-header__elements__input__text {
+  padding-right: 5px;
+}
+
+.site-header__elements__input__field {
+  height: 1.7rem;
+  margin-right: 10px;
+}
+
+.site-header__elements__sql-rezultat {
+  padding: 0 20px;
+  text-align: right;
+}
+
+.site-header__elements__sql-rezultat--text {}
 
 .rezultati {
 	position: relative;
@@ -606,19 +630,6 @@ a {
 	min-height: 500px;
 
 
-}
-
-.input {
-	display: inline-block;
-}
-
-.input__text {
-  display: inline-block;
-}
-
-.input__field {
-  display: inline-block;
-  height: 1.7rem;
 }
 
 .table {

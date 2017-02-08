@@ -36,11 +36,41 @@
 
   &__elements {
     position: relative;
-    float: right;
-    padding: 10px 0;
+    display: inline-block;
+    margin: 0;
 
   }
 
+  &__elements_div {
+    padding: 14px 0;
+    float: right;
+  }
+
+
+  &__elements__input {
+    padding: 0;
+
+  }
+
+  &__elements__input__text {
+    padding-right: 5px;
+  }
+
+  &__elements__input__field {
+    height: 1.7rem;
+    margin-right: 10px;
+  }
+
+
+  &__elements__sql-rezultat {
+    padding: 0 20px;
+    text-align: right;
+
+  }
+
+  &__elements__sql-rezultat--text {
+
+  }
 
 
 }

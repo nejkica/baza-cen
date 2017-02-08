@@ -56,6 +56,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	// import delay from './modules/InputDelay';
 	//import StickyHeader from './modules/StickyHeader';
 	//import Psql from './modules/Psql';
 
@@ -9888,7 +9889,7 @@
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 		value: true
@@ -9900,6 +9901,10 @@
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
+	var _InputDelay = __webpack_require__(3);
+
+	var _InputDelay2 = _interopRequireDefault(_InputDelay);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -9909,33 +9914,49 @@
 			_classCallCheck(this, Ajax);
 
 			this.ajaxBtn = (0, _jquery2.default)(".btn");
-			this.inputOpis = (0, _jquery2.default)(".input__field");
+			this.inputOpis = (0, _jquery2.default)("#inputOpis");
 			this.izvajanje();
+			this.vpisZnaka();
 			//console.log('delam');
 		}
 
 		_createClass(Ajax, [{
-			key: "izvajanje",
+			key: 'vpisZnaka',
+			value: function vpisZnaka() {
+				var zamik = new _InputDelay2.default();
+
+				this.inputOpis.keyup(zamik.debounce(function () {
+					console.log('test po eni sekundi');
+				}, 1000));
+			}
+		}, {
+			key: 'izvajanje',
 			value: function izvajanje() {
-				//to še nič ne dela
 
 				//  	this.ajaxBtn.click(function() {
 				this.inputOpis.keyup(function () {
-					//  		console.log('delam');
-					var vpisanaVrednost = (0, _jquery2.default)(".input__field").val();
+					//console.log('delam');
+					var vpisanaVrednost = (0, _jquery2.default)(".site-header__elements__input__field").val();
 					var vpisanaVrednostArr = vpisanaVrednost.split(" ");
-					//console.log(vpisanaVrednostArr);
-					//console.log(vpisanaVrednost);
 
-					if (vpisanaVrednost.length > 2) {
+					if (vpisanaVrednost.length > 1) {
 						_jquery2.default.ajax({
 							url: "http://localhost/sql/" + vpisanaVrednost,
 							success: function success(result) {
 								var rezultat = JSON.parse(result);
+								var stVrstic = rezultat.length;
 
+								(0, _jquery2.default)('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: ' + stVrstic);
 								//najprej izpis glave
-								(0, _jquery2.default)('#t-naslovna-vrstica').empty();
+
 								(0, _jquery2.default)('#t-body').empty();
+
+								if (rezultat == 0) {
+									(0, _jquery2.default)('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: 0');
+									throw new Error("Rezultat poizvedbe je 0");
+								}
+
+								(0, _jquery2.default)('#t-naslovna-vrstica').empty();
 								Object.keys(rezultat[0]).forEach(function (k) {
 
 									(0, _jquery2.default)('#t-naslovna-vrstica').append('<th class="table--header--th">' + k + '</th>');
@@ -9945,7 +9966,6 @@
 								//console.log(Object.values(rezultat));
 								_jquery2.default.each(rezultat, function (index, item) {
 									(0, _jquery2.default)('#t-body').append('<tr class="table--body--row" id="row-' + index + '"></tr>');
-									//console.log(index + ' ' + Object.values(item));
 
 									var m = 0;
 									Object.values(item).forEach(function (value) {
@@ -9971,12 +9991,15 @@
 										m += 1;
 									});
 								});
+							},
+							error: function error(jqXHR, exception) {
+								console.log(jqXHR.status + ' ' + exception);
 							}
-						});
+						}); //konec ajax
 					} else {
 						(0, _jquery2.default)('#t-body').empty();
 					}
-				});
+				}); //konec keyup
 			}
 		}]);
 
@@ -9984,6 +10007,53 @@
 	}();
 
 	exports.default = Ajax;
+
+/***/ },
+/* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _jquery = __webpack_require__(1);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Delay = function () {
+		function Delay() {
+			_classCallCheck(this, Delay);
+
+			this.debounce();
+		}
+
+		_createClass(Delay, [{
+			key: 'debounce',
+			value: function debounce(fn, delay) {
+				var timer = null;
+				return function () {
+					var context = this,
+					    args = arguments;
+					clearTimeout(timer);
+					timer = setTimeout(function () {
+						fn.apply(context, args);
+					}, delay);
+				};
+			}
+		}]);
+
+		return Delay;
+	}();
+
+	exports.default = Delay;
 
 /***/ }
 /******/ ]);

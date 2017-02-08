@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import Ajax from './modules/Ajax';
+// import delay from './modules/InputDelay';
 //import StickyHeader from './modules/StickyHeader';
 //import Psql from './modules/Psql';
 
