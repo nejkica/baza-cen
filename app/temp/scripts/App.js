@@ -9892,7 +9892,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-		value: true
+			value: true
 	});
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -9910,100 +9910,103 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var Ajax = function () {
-		function Ajax() {
-			_classCallCheck(this, Ajax);
+			function Ajax() {
+					_classCallCheck(this, Ajax);
 
-			this.ajaxBtn = (0, _jquery2.default)(".btn");
-			this.inputOpis = (0, _jquery2.default)("#inputOpis");
-			this.izvajanje();
-			this.vpisZnaka();
-			//console.log('delam');
-		}
-
-		_createClass(Ajax, [{
-			key: 'vpisZnaka',
-			value: function vpisZnaka() {
-				var zamik = new _InputDelay2.default();
-
-				this.inputOpis.keyup(zamik.debounce(function () {
-					console.log('test po eni sekundi');
-				}, 1000));
-			}
-		}, {
-			key: 'izvajanje',
-			value: function izvajanje() {
-
-				//  	this.ajaxBtn.click(function() {
-				this.inputOpis.keyup(function () {
+					this.ajaxBtn = (0, _jquery2.default)(".btn");
+					this.inputOpis = (0, _jquery2.default)("#inputOpis");
+					// this.izvajanje();
+					this.vpisZnaka();
 					//console.log('delam');
-					var vpisanaVrednost = (0, _jquery2.default)(".site-header__elements__input__field").val();
-					var vpisanaVrednostArr = vpisanaVrednost.split(" ");
-
-					if (vpisanaVrednost.length > 1) {
-						_jquery2.default.ajax({
-							url: "http://localhost/sql/" + vpisanaVrednost,
-							success: function success(result) {
-								var rezultat = JSON.parse(result);
-								var stVrstic = rezultat.length;
-
-								(0, _jquery2.default)('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: ' + stVrstic);
-								//najprej izpis glave
-
-								(0, _jquery2.default)('#t-body').empty();
-
-								if (rezultat == 0) {
-									(0, _jquery2.default)('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: 0');
-									throw new Error("Rezultat poizvedbe je 0");
-								}
-
-								(0, _jquery2.default)('#t-naslovna-vrstica').empty();
-								Object.keys(rezultat[0]).forEach(function (k) {
-
-									(0, _jquery2.default)('#t-naslovna-vrstica').append('<th class="table--header--th">' + k + '</th>');
-								});
-
-								//potem izpis rezultatov
-								//console.log(Object.values(rezultat));
-								_jquery2.default.each(rezultat, function (index, item) {
-									(0, _jquery2.default)('#t-body').append('<tr class="table--body--row" id="row-' + index + '"></tr>');
-
-									var m = 0;
-									Object.values(item).forEach(function (value) {
-										var idVrstice = "#row-" + index;
-
-										//console.log(value);
-										(0, _jquery2.default)(idVrstice).append('<td class="table--td--' + Object.keys(item)[m] + '-' + index + '"></td>');
-										//console.log(Object.keys(item)[m]);
-										var selTd = '.table--td--' + Object.keys(item)[m] + '-' + index;
-
-										if (selTd.indexOf("Opis") >= 0) {
-
-											for (var i = 0; i < vpisanaVrednostArr.length; i++) {
-												//console.log(vpisanaVrednostArr[i]);
-												var iskaniStr = vpisanaVrednostArr[i];
-												var zamenjajZ = '<span>' + vpisanaVrednostArr[i] + '</span>';
-												value = value.replace(iskaniStr, zamenjajZ);
-											}
-										}
-
-										(0, _jquery2.default)(selTd).append(value);
-
-										m += 1;
-									});
-								});
-							},
-							error: function error(jqXHR, exception) {
-								console.log(jqXHR.status + ' ' + exception);
-							}
-						}); //konec ajax
-					} else {
-						(0, _jquery2.default)('#t-body').empty();
-					}
-				}); //konec keyup
 			}
-		}]);
 
-		return Ajax;
+			_createClass(Ajax, [{
+					key: 'vpisZnaka',
+					value: function vpisZnaka() {
+							var zamik = new _InputDelay2.default();
+							var that = this;
+							this.inputOpis.keyup(zamik.debounce(function () {
+									// console.log('tipka pritisnjena');
+									that.izvajanje();
+							}, 250));
+					}
+			}, {
+					key: 'izvajanje',
+					value: function izvajanje() {
+
+							//  	this.ajaxBtn.click(function() {
+							// this.inputOpis.keyup(function() {
+							//console.log('delam');
+							var vpisanaVrednost = (0, _jquery2.default)(".site-header__elements__input__field").val();
+							var vpisanaVrednostArr = vpisanaVrednost.split(" ");
+
+							if (vpisanaVrednost.length > 0) {
+									_jquery2.default.ajax({
+											url: "http://localhost/sql/" + vpisanaVrednost,
+											success: function success(result) {
+													var rezultat = JSON.parse(result);
+													var stVrstic = rezultat.length;
+
+													(0, _jquery2.default)('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: ' + stVrstic);
+													//najprej izpis glave
+
+													(0, _jquery2.default)('#t-body').empty();
+
+													if (rezultat == 0) {
+															(0, _jquery2.default)('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: 0');
+															throw new Error("Rezultat poizvedbe je 0");
+													}
+
+													(0, _jquery2.default)('#t-naslovna-vrstica').empty();
+													Object.keys(rezultat[0]).forEach(function (k) {
+
+															(0, _jquery2.default)('#t-naslovna-vrstica').append('<th class="table--header--th">' + k + '</th>');
+													});
+
+													//potem izpis rezultatov
+													//console.log(Object.values(rezultat));
+													_jquery2.default.each(rezultat, function (index, item) {
+															(0, _jquery2.default)('#t-body').append('<tr class="table--body--row" id="row-' + index + '"></tr>');
+
+															var m = 0;
+															Object.values(item).forEach(function (value) {
+																	var idVrstice = "#row-" + index;
+
+																	//console.log(value);
+																	(0, _jquery2.default)(idVrstice).append('<td class="table--td--' + Object.keys(item)[m] + '-' + index + '"></td>');
+																	//console.log(Object.keys(item)[m]);
+																	var selTd = '.table--td--' + Object.keys(item)[m] + '-' + index;
+
+																	if (selTd.indexOf("Opis") >= 0) {
+
+																			for (var i = 0; i < vpisanaVrednostArr.length; i++) {
+																					//console.log(vpisanaVrednostArr[i]);
+																					var iskaniStr = vpisanaVrednostArr[i];
+																					var zamenjajZ = '<span>' + vpisanaVrednostArr[i] + '</span>';
+																					value = value.replace(iskaniStr, zamenjajZ);
+																			}
+																	}
+
+																	(0, _jquery2.default)(selTd).append(value);
+
+																	m += 1;
+															});
+													});
+											},
+											error: function error(jqXHR, exception) {
+													console.log(jqXHR.status + ' ' + exception);
+											}
+									}); //konec ajax
+							} else {
+									(0, _jquery2.default)('#t-body').empty();
+									(0, _jquery2.default)('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: 0');
+							}
+
+							// }); //konec keyup
+					}
+			}]);
+
+			return Ajax;
 	}();
 
 	exports.default = Ajax;
