@@ -664,9 +664,34 @@ a {
 
 .table--body--row td {
   vertical-align: top;
-  border: 1px solid rgba(119,119,119, .3);
+  border: 1px solid rgba(216,216,216, .3);
 }
 
 .table span {
   background-color: rgba(21,255,0, .3);
+}
+
+.nabor-projektov {
+	position: absolute;
+	display: inline-block;
+	margin: 0;
+	margin-top: 70px;
+	right: 10px;
+	/*background-color: rgba(#fffa00, .5); */
+	padding: 0;
+	height: 60px;
+	max-width: 1000px;
+	z-index: 2;
+}
+
+.nabor-projektov__projekt {
+  display: inline-block;
+  color: #FFF;
+  padding: 5px;
+  margin-top: 2px;
+  font-weight: 300;
+  font-size: .9rem;
+  text-decoration: none;
+  background-color: rgba(0,140,28, .5);
+  border-radius: 5px;
 }

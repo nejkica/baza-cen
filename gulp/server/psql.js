@@ -10,12 +10,23 @@ function Psql(vnos, callback) {
 	//console.log(vnosArr);
 	vnosArrSQL = [];
 
-	var sqlQ = "SELECT DISTINCT ON (\"Opis\") * FROM cenik WHERE";
+	var sqlQ = "SELECT DISTINCT ON (\"Opis\") \"Poz\",\
+	 ('<b>'||\"N1\"||'-'||\"N2\"||'-'||\"N3\"||'-'||\"N4\"\
+	 ||'-'||\"N5\"||'</b>-'||\"Opis\") AS \"Opis_z_naslovi\",\
+	  \"EM\",\"Cena\",\"Valuta\",\"Projekt\",\"Fkor\",\"Opomba\",\
+	  \"Kljuc\" FROM cenik WHERE";
+
 	for (i=0; i < vnosArr.length; i++) {
 		if ( i > 0 ) {
 			sqlQ += " AND"
 		}
-		sqlQ += " \"Opis\" LIKE $" + (i+1);
+		sqlQ += " (LOWER(\"Opis\") LIKE LOWER($" + (i+1) + ")\
+		 OR LOWER(\"N1\") LIKE LOWER($" + (i+1) + ")\
+		  OR LOWER(\"N2\") LIKE LOWER($" + (i+1) + ")\
+		  OR LOWER(\"N3\") LIKE LOWER($" + (i+1) + ")\
+		  OR LOWER(\"N4\") LIKE LOWER($" + (i+1) + ")\
+		  OR LOWER(\"N5\") LIKE LOWER($" + (i+1) + ")\
+		  OR LOWER(\"Projekt\") LIKE LOWER($" + (i+1) + "))";
 
 		vnosArrSQL.push("%" + vnosArr[i] + "%");
 	}

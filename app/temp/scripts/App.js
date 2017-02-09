@@ -54,6 +54,10 @@
 
 	var _Ajax2 = _interopRequireDefault(_Ajax);
 
+	var _KlikNaProjekt = __webpack_require__(4);
+
+	var _KlikNaProjekt2 = _interopRequireDefault(_KlikNaProjekt);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	// import delay from './modules/InputDelay';
@@ -64,6 +68,7 @@
 	//var psql = new Psql();
 
 	var ajax = new _Ajax2.default();
+	var klikNaProjekt = new _KlikNaProjekt2.default();
 
 /***/ },
 /* 1 */
@@ -9929,6 +9934,10 @@
 									// console.log('tipka pritisnjena');
 									that.izvajanje();
 							}, 250));
+							// this.inputOpis.keyup(function() {
+							// 	// console.log('tipka pritisnjena');
+							// 	that.izvajanje();
+							// });
 					}
 			}, {
 					key: 'izvajanje',
@@ -9940,12 +9949,19 @@
 							var vpisanaVrednost = (0, _jquery2.default)(".site-header__elements__input__field").val();
 							var vpisanaVrednostArr = vpisanaVrednost.split(" ");
 
-							if (vpisanaVrednost.length > 0) {
+							if (vpisanaVrednost.length > 1) {
 									_jquery2.default.ajax({
 											url: "http://localhost/sql/" + vpisanaVrednost,
 											success: function success(result) {
 													var rezultat = JSON.parse(result);
 													var stVrstic = rezultat.length;
+													var naborProjektov = [];
+
+													// $('.nabor-projektov__projekt').each(function(){
+													// 		naborProjektov.push($(this).text());
+													// 		// console.log(naborProjektov);
+													// 	});
+
 
 													(0, _jquery2.default)('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: ' + stVrstic);
 													//najprej izpis glave
@@ -9959,40 +9975,54 @@
 
 													(0, _jquery2.default)('#t-naslovna-vrstica').empty();
 													Object.keys(rezultat[0]).forEach(function (k) {
-
+															k = k.replace(/_/g, " ");
 															(0, _jquery2.default)('#t-naslovna-vrstica').append('<th class="table--header--th">' + k + '</th>');
 													});
 
 													//potem izpis rezultatov
 													//console.log(Object.values(rezultat));
+													(0, _jquery2.default)('.nabor-projektov').empty();
 													_jquery2.default.each(rezultat, function (index, item) {
 															(0, _jquery2.default)('#t-body').append('<tr class="table--body--row" id="row-' + index + '"></tr>');
 
 															var m = 0;
+
 															Object.values(item).forEach(function (value) {
 																	var idVrstice = "#row-" + index;
+																	var trenutniKey = Object.keys(item)[m];
 
 																	//console.log(value);
-																	(0, _jquery2.default)(idVrstice).append('<td class="table--td--' + Object.keys(item)[m] + '-' + index + '"></td>');
+																	(0, _jquery2.default)(idVrstice).append('<td class="table--td--' + trenutniKey + '-' + index + '"></td>');
 																	//console.log(Object.keys(item)[m]);
 																	var selTd = '.table--td--' + Object.keys(item)[m] + '-' + index;
 
-																	if (selTd.indexOf("Opis") >= 0) {
+																	if (selTd.indexOf("Opis_z_naslovi") >= 0 || selTd.indexOf("Projekt") >= 0) {
+																			//tukaj highlight-amo iskani niz
 
 																			for (var i = 0; i < vpisanaVrednostArr.length; i++) {
 																					//console.log(vpisanaVrednostArr[i]);
 																					var iskaniStr = vpisanaVrednostArr[i];
+
 																					var zamenjajZ = '<span>' + vpisanaVrednostArr[i] + '</span>';
-																					value = value.replace(iskaniStr, zamenjajZ);
+																					// value = value.replace(iskaniStr, zamenjajZ);
+																					if (iskaniStr.length > 1) {
+																							var iskaniStrRegEx = new RegExp(iskaniStr, "ig");
+																							value = value.replace(iskaniStrRegEx, zamenjajZ);
+																							// console.log(ArrSpozicijami);
+																					}
 																			}
-																	}
+																	} //--- konec ---tukaj highlight-amo iskani niz
 
 																	(0, _jquery2.default)(selTd).append(value);
 
+																	if (trenutniKey == 'Projekt' && _jquery2.default.inArray(value, naborProjektov) == -1) {
+																			naborProjektov.push(value);
+																			(0, _jquery2.default)('.nabor-projektov').append('<a href="#" class="nabor-projektov__projekt">' + value + '</a>');
+																	}
 																	m += 1;
-															});
-													});
-											},
+															}); //--- konec --- each item (zapis vsakega elementa JSON objekta za vsako vrstico )
+													}); //--- konec ---each rezultat (vrstica)
+											}, // --- konec --- success ajaxa
 											error: function error(jqXHR, exception) {
 													console.log(jqXHR.status + ' ' + exception);
 											}
@@ -10000,6 +10030,7 @@
 							} else {
 									(0, _jquery2.default)('#t-body').empty();
 									(0, _jquery2.default)('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: 0');
+									(0, _jquery2.default)('.nabor-projektov').empty();
 							}
 
 							// }); //konec keyup
@@ -10057,6 +10088,55 @@
 	}();
 
 	exports.default = Delay;
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _jquery = __webpack_require__(1);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var KlikNaProjekt = function () {
+		function KlikNaProjekt() {
+			_classCallCheck(this, KlikNaProjekt);
+
+			// this.projekt = $('.nabor-projektov__projekt');
+			this.inputOpis = (0, _jquery2.default)("#inputOpis");
+			this.naborProjektov = (0, _jquery2.default)('.nabor-projektov');
+			this.dodajVinput();
+		}
+
+		_createClass(KlikNaProjekt, [{
+			key: 'dodajVinput',
+			value: function dodajVinput() {
+				var that = this;
+				this.naborProjektov.on('click', '.nabor-projektov__projekt', function () {
+					var izbraniProjekt = (0, _jquery2.default)(this).text();
+					var zacetnaVrednostinputa = that.inputOpis.val();
+					console.log(izbraniProjekt + " " + zacetnaVrednostinputa);
+					that.inputOpis.val(zacetnaVrednostinputa + " " + izbraniProjekt + " ");
+					that.inputOpis.trigger('keyup');
+				});
+			}
+		}]);
+
+		return KlikNaProjekt;
+	}();
+
+	exports.default = KlikNaProjekt;
 
 /***/ }
 /******/ ]);

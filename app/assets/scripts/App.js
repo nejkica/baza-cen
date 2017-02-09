@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import Ajax from './modules/Ajax';
+import KlikNaProjekt from './modules/KlikNaProjekt';
 // import delay from './modules/InputDelay';
 //import StickyHeader from './modules/StickyHeader';
 //import Psql from './modules/Psql';
@@ -8,3 +9,4 @@ import Ajax from './modules/Ajax';
 //var psql = new Psql();
 
 var ajax = new Ajax();
+var klikNaProjekt = new KlikNaProjekt();
