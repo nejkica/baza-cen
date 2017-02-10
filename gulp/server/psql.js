@@ -46,19 +46,26 @@ function Psql(vnos, callback) {
 	};
 
 
-	var client = new pg.Client(config);
-
-	client.connect(function (err) {
-		
+	// var client = new pg.Client(config);
+	var pool = new pg.Pool(config);
+	// client.connect(function (err) {
+	pool.connect(function (err, client, done) {	
+		if (err) {
+			return console.error('napaka pri iskanju client iz pool-a', err);
+		}
 		
 //	var query = client.query("SELECT * FROM cenik WHERE \"Opis\" LIKE $1", [sqlVnos], function(err, result){
-	var query = client.query(sqlQ, vnosArrSQL, function(err, result){
+	client.query(sqlQ, vnosArrSQL, function(err, result){
+		done();
+		if(err) {
+	      return console.error('query ni uspel', err);
+	    }
 		var rezultat = JSON.stringify(result.rows, null, "   ");
 //
 		callback(rezultat);
 	});
 
-	client.on('error', function(error) {
+	pool.on('error', function(error) {
       console.log(error);
     });
 
