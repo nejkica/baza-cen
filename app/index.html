@@ -31,7 +31,7 @@
         <div class="site-header__elements site-header__elements__input">
           <p class="site-header__elements site-header__elements__input__text">Išči po opisu</p>
           <input type="text" name="opis" class="site-header__elements site-header__elements__input__field" id="inputOpis">
-          <a href="#" class="site-header__elements btn">Išči</a>
+          <a href="#" class="site-header__elements btn" id="open-modal">Projekti</a>
           
         </div>
         
@@ -87,7 +87,16 @@
     </div>
   </footer>
 
-  
+  <div class="modal">
+    <div class="modal__inner">
+        <h2 class="header">Projekt <strong>Rakek</strong></h2>
+      <div class="wrapper">
+        <p class="modal__description">ČN 4000 PE, 15 km kanalizacije, 6 suhih črpališč</p>
+      </div>
+
+    </div>
+    <div class="modal__close">X</div>
+  </div>
   <!-- build:js assets/scripts/App.js -->
   <script src="/temp/scripts/App.js"></script>
   <!-- endbuild -->

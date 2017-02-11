@@ -55,7 +55,7 @@ var renderCSS = function(content) {
 
       var webVnos = parts[2];
       var rezul = "";
-      //Pregledamo za ČŽŠ %C4%8D %C5%BE %C5%A1
+      //Pregledamo za ČŽŠ %C4%8D %C5%BE %C5%A1 - RegEx pa zato, da poišče vse, ne samo prvega
       var re = new RegExp("%C5%A1", 'g');
       webVnos = webVnos.replace(re, 'š');
       var re = new RegExp("%C5%BE", 'g');

@@ -52,7 +52,7 @@ class Ajax {
 
   				if (rezultat == 0){
   					$('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: 0')
-  					throw new Error("Rezultat poizvedbe je 0");
+  					// throw new Error("Rezultat poizvedbe je 0");
   				}
 
   				$('#t-naslovna-vrstica').empty();
@@ -70,6 +70,7 @@ class Ajax {
   					var m = 0;
 
   					Object.values(item).forEach(function(value) {
+  						var vrednost = value;
   						var idVrstice = "#row-" + index;
   						var trenutniKey = Object.keys(item)[m];
   						
@@ -88,18 +89,18 @@ class Ajax {
 									// value = value.replace(iskaniStr, zamenjajZ);
 									if (iskaniStr.length > 1){
 										var iskaniStrRegEx = new RegExp(iskaniStr, "ig");
-										value = value.replace(iskaniStrRegEx, zamenjajZ);
+										vrednost = vrednost.replace(iskaniStrRegEx, zamenjajZ);
 										// console.log(ArrSpozicijami);
 
 									}
 								}
 							} //--- konec ---tukaj highlight-amo iskani niz
 
-							$(selTd).append(value);		
+							$(selTd).append(vrednost);		
 
 							if ((trenutniKey == 'Projekt') && ($.inArray(value, naborProjektov) == -1)) {
 								naborProjektov.push(value);
-								$('.nabor-projektov').append('<a href="#" class="nabor-projektov__projekt">' + value + '</a>');
+								$('.nabor-projektov').append('<a href="#" class="nabor-projektov__projekt" id="open-modal">' + value + '</a>');
 							}
   						m +=1;
   					}); //--- konec --- each item (zapis vsakega elementa JSON objekta za vsako vrstico )

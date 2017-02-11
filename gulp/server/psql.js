@@ -33,7 +33,7 @@ function Psql(vnos, callback) {
 
 	sqlQ += " ORDER BY \"Opis\" LIMIT 200";
 	//console.log(sqlQ);
-	var sqlVnos = "%" + vnos + "%";
+	// var sqlVnos = "%" + vnos + "%";
 
 	var config = {
 		user: 'postgres', //env var: PGUSER 
