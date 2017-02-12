@@ -1,5 +1,5 @@
-var gulp = require('gulp'),
-pg = require('pg') ;
+// var gulp = require('gulp'),
+var pg = require('pg') ;
 
 
 //Psql.prototype.poizvedba = 
@@ -73,6 +73,10 @@ function Psql(vnos, callback) {
 	});
 
 
+}
+
+function Query (sqlSt, arrSpremenljivk) {
+	
 }
 
 exports.Psql = Psql;

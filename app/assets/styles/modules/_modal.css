@@ -1,5 +1,6 @@
 .modal {
   position: fixed;
+  display: inline-block;
   z-index: 5;
   background-color: rgba(255, 255, 255, .95);
   top: 0;
@@ -23,9 +24,22 @@
     position: absolute;
     max-width: 1200px;
     min-width: 1000px;
-    left: 50px;
+    left: 50%;
     /*top: 50%;*/
-    /*transform: translateX(-50%);*/
+    transform: translateX(-50%);
+  }
+
+  &__projekti {
+    position: relative;
+    display: inline-block;
+    background-color: yellow;
+    z-index: 10;
+    float: right;
+    /*right: 20px;*/
+    min-width: 200px;
+    max-width: 500px;
+    height: 200px;
+
   }
 
   &__description {
@@ -44,6 +58,7 @@
     transform-origin: 100% 0;
     color: $mainBlue;
     cursor: pointer;
+    z-index: 100;
 
     &:hover {
       color: $mainOrange;
