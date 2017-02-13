@@ -6,6 +6,7 @@ nested = require('postcss-nested'),
 cssImport = require('postcss-import'),
 mixins = require('postcss-mixins'),
 hexrgba = require('postcss-hexrgba');
+// randomColor = require('postcss-randomcolor');
 
 gulp.task('styles', function() {
   return gulp.src('./app/assets/styles/styles.css')

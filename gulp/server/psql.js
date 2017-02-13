@@ -3,7 +3,7 @@ var pg = require('pg') ;
 
 
 //Psql.prototype.poizvedba = 
-function Psql(vnos, callback) {
+function Cenik(vnos, callback) {
 	//console.log(vnos);
 	var rezultat = "nič";	
 	var vnosArr = vnos.split('%20');
@@ -35,6 +35,43 @@ function Psql(vnos, callback) {
 	//console.log(sqlQ);
 	// var sqlVnos = "%" + vnos + "%";
 
+	Query(sqlQ, vnosArrSQL, function(rezultat) {
+		callback(rezultat);
+	});
+}
+
+function Projekti(callback) {
+	//console.log(vnos);
+	var rezultat = "nič";	
+	// var vnosArr = vnos.split('%20');
+	//console.log(vnosArr);
+	vnosArrSQL = [];
+
+	var sqlQ = "SELECT \"Projekt\" FROM projektir12";
+
+	Query(sqlQ, vnosArrSQL, function(rezultat) {
+		callback(rezultat);
+	});
+}
+
+function Projekt(vnos, callback) {
+	console.log(vnos);
+	var rezultat = "nič";	
+	// var vnosArr = vnos.split('%20');
+	//console.log(vnosArr);
+	vnosArrSQL = [vnos];
+
+	var sqlQ = "SELECT \"Projekt\", \"INVESTOR\", \"TITLE-OFF\", \"CONTRACT-NO\", \"TYPE-OF-CONTRACT\", \"DESCRIPTION-OF-WORKS\",\"Type\",\"New-reconstruction\", \"Capacity\", \"Sewage-Length\", \"PS-wet\", \"PS-dry\", \"Other-objects\", \"CONTRACT-VALUE\", \"DATE-OF-SIGNING\", \"TOC\", \"PC\", \"ROLE\" FROM \"projektir12\" WHERE (LOWER(\"Projekt\") = LOWER($1)) ORDER BY \"Projekt\"";
+
+	Query(sqlQ, vnosArrSQL, function(rezultat) {
+		callback(rezultat);
+	});
+}
+
+
+
+function Query (sqlSt, arrSpremenljivk, cb) {
+
 	var config = {
 		user: 'postgres', //env var: PGUSER 
 		database: 'BazaCenikov', //env var: PGDATABASE 
@@ -55,14 +92,13 @@ function Psql(vnos, callback) {
 		}
 		
 //	var query = client.query("SELECT * FROM cenik WHERE \"Opis\" LIKE $1", [sqlVnos], function(err, result){
-	client.query(sqlQ, vnosArrSQL, function(err, result){
+	client.query(sqlSt, arrSpremenljivk, function(err, result){
 		done();
 		if(err) {
 	      return console.error('query ni uspel', err);
 	    }
 		var rezultat = JSON.stringify(result.rows, null, "   ");
-//
-		callback(rezultat);
+		cb(rezultat);
 	});
 
 	pool.on('error', function(error) {
@@ -71,12 +107,8 @@ function Psql(vnos, callback) {
 
 
 	});
-
-
 }
 
-function Query (sqlSt, arrSpremenljivk) {
-	
-}
-
-exports.Psql = Psql;
+exports.Cenik = Cenik;
+exports.Projekti = Projekti;
+exports.Projekt = Projekt;

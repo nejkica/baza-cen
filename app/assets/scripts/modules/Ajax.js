@@ -1,34 +1,96 @@
+/*jshint esversion: 6 */
+
+
 import $ from 'jquery';
 import Delay from './InputDelay';
+import RandomColor from './RandomColor';
 
 class Ajax {
 	constructor() {
 		this.ajaxBtn = $(".btn");
 		this.inputOpis = $("#inputOpis");
-		// this.izvajanje();
+		this.izbraniProjekt = $(".modal__projekti");
 		this.vpisZnaka();
-		//console.log('delam');
+		this.projektiAjax();
+		this.projektAjax();
 	}
 
 	vpisZnaka() {
-		var zamik = new Delay;
+		var zamik = new Delay();
 		var that = this;
 		this.inputOpis.keyup(zamik.debounce(function() {
-			// console.log('tipka pritisnjena');
-			that.izvajanje();
+			that.cenikAjax();
 		}, 250));
-		// this.inputOpis.keyup(function() {
-		// 	// console.log('tipka pritisnjena');
-		// 	that.izvajanje();
-		// });
   }
 
-  izvajanje() { 
+  projektAjax() { 
+  	var that = this;
+  	this.izbraniProjekt.on("click", "a", (function() {
+  		$('.modal__wrapper').empty();
+  		var poizvedba = $(this).text().toLowerCase();
+  		$.ajax({
+  			url: "http://localhost/projekt/" + poizvedba,
+  			success: function(result) {
+  				var rezultat = JSON.parse(result);
+  				var n = 0;
+  				$.each(rezultat, function(index, item) {
+  					Object.values(item).forEach(function(value) {
+  						var trenutniKey = Object.keys(rezultat[0])[n];
+  						if (trenutniKey == 'Projekt') {
+  							$('.modal__wrapper').prepend('<div class="modal__vrstica"><p class="modal__key">' + trenutniKey + ':</p><h2 class="modal__header"> ' + value + '</h2></div>');
+  						} else if (trenutniKey == 'TOC' || trenutniKey == 'PC' || trenutniKey=='DATE-OF-SIGNING') {
+  								$('.modal__wrapper').append('<div class="modal__vrstica"><p class="modal__key">' + trenutniKey + ':</p><p class="modal__value"> ' + new Date(value).toLocaleDateString() + '</p></div>');
+  						} else if (trenutniKey == 'CONTRACT-VALUE') {
+  								$('.modal__wrapper').append('<div class="modal__vrstica"><p class="modal__key">' + trenutniKey + ':</p><p class="modal__value"> ' + value.toLocaleString() + ' EUR brez DDV</p></div>');
+  						} else {
+									$('.modal__wrapper').append('<div class="modal__vrstica"><p class="modal__key">' + trenutniKey + ':</p><p class="modal__value"> ' + value + '</p></div>');
+							}
+							n += 1;
+  					}); //--- konec --- each item (zapis vsakega elementa JSON objekta za vsako vrstico )
+  				}); //--- konec ---each rezultat (vrstica)
+  			}, // --- konec --- success ajaxa
+  			error: function (jqXHR, exception) {
+				        console.log(jqXHR.status + ' ' + exception );
+				    	}
+  		}); //konec ajax
+  	}));
+	}
+
+
+  projektiAjax() { 
+  	this.ajaxBtn.click(function() {
+  		
+  		$.ajax({
+  			url: "http://localhost/projekti",
+  			success: function(result) {
+  				$('.modal__projekti').empty();
+  				var rezultat = JSON.parse(result);
+  				$.each(rezultat, function(index, item) {
+  					Object.values(item).forEach(function(value) {
+				
+							$('.modal__projekti').append('<a href="#" class="modal__projekti__projekt projektI' + index + '">' + value + '</a>');
+							var rc = new RandomColor(function(barva){ return barva;});
+		  				// console.log(rc.rc);
+		  				$('.projektI' + index).css("background-color", rc.rc);
+  					}); //--- konec --- each item (zapis vsakega elementa JSON objekta za vsako vrstico )
+  				
+  				}); //--- konec ---each rezultat (vrstica)
+  			// $('.modal__projekti__projekt').each(function() {
+  			// 	var rc = new RandomColor(function(barva){ return barva});
+  			// 	console.log(rc.rc);
+  			// 	$('.modal__projekti__projekt').css("background-color", rc.rc);
+  			// });
+  			}, // --- konec --- success ajaxa
+  			error: function (jqXHR, exception) {
+				        console.log(jqXHR.status + ' ' + exception );
+				    	}
+  		}); //konec ajax
+  	});
+	}
+
+  cenikAjax() { 
   	
-//  	this.ajaxBtn.click(function() {
-		// this.inputOpis.keyup(function() {
-  		//console.log('delam');
-		var vpisanaVrednost = $(".site-header__elements__input__field").val();
+		var vpisanaVrednost = $(".site-header__elements__input__field").val().toLowerCase();
 		var vpisanaVrednostArr = vpisanaVrednost.split(" ");
 
 		if (vpisanaVrednost.length > 1) {
@@ -38,12 +100,6 @@ class Ajax {
   				var rezultat = JSON.parse(result);
   				var stVrstic = rezultat.length;
   				var naborProjektov = [];
-
-					// $('.nabor-projektov__projekt').each(function(){
- 				// 		naborProjektov.push($(this).text());
- 				// 		// console.log(naborProjektov);
- 				// 	});
-
 
   				$('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: ' + stVrstic)
   				//najprej izpis glave
@@ -62,7 +118,6 @@ class Ajax {
   				});
 
   				//potem izpis rezultatov
-  				//console.log(Object.values(rezultat));
   				$('.nabor-projektov').empty();
   				$.each(rezultat, function(index, item) {
   					$('#t-body').append('<tr class="table--body--row" id="row-' + index + '"></tr>');
@@ -74,23 +129,18 @@ class Ajax {
   						var idVrstice = "#row-" + index;
   						var trenutniKey = Object.keys(item)[m];
   						
-  						//console.log(value);
   						$(idVrstice).append('<td class="table--td--' + trenutniKey + '-' + index + '"></td>'); 
-							//console.log(Object.keys(item)[m]);
 							var selTd = '.table--td--' + Object.keys(item)[m] + '-' + index;
 							
 							if ((selTd.indexOf("Opis_z_naslovi") >= 0) || (selTd.indexOf("Projekt") >= 0)){ //tukaj highlight-amo iskani niz
 								
 								for (var i=0; i < vpisanaVrednostArr.length; i++) {
-									//console.log(vpisanaVrednostArr[i]);
 									var iskaniStr = vpisanaVrednostArr[i];
 
 									 var zamenjajZ = '<span>' + vpisanaVrednostArr[i] + '</span>';
-									// value = value.replace(iskaniStr, zamenjajZ);
 									if (iskaniStr.length > 1){
 										var iskaniStrRegEx = new RegExp(iskaniStr, "ig");
 										vrednost = vrednost.replace(iskaniStrRegEx, zamenjajZ);
-										// console.log(ArrSpozicijami);
 
 									}
 								}
@@ -117,8 +167,8 @@ class Ajax {
 			$('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: 0')
 			$('.nabor-projektov').empty();
 		}
-
-		// }); //konec keyup
 	}
+
+
 }
 export default Ajax;
