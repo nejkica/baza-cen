@@ -1,7 +1,5 @@
-/*jshint esversion: 6 */
-
-
 import $ from 'jquery';
+import dateFormat from 'dateformat';
 import Delay from './InputDelay';
 import RandomColor from './RandomColor';
 
@@ -39,9 +37,9 @@ class Ajax {
   						if (trenutniKey == 'Projekt') {
   							$('.modal__wrapper').prepend('<div class="modal__vrstica"><p class="modal__key">' + trenutniKey + ':</p><h2 class="modal__header"> ' + value + '</h2></div>');
   						} else if (trenutniKey == 'TOC' || trenutniKey == 'PC' || trenutniKey=='DATE-OF-SIGNING') {
-  								$('.modal__wrapper').append('<div class="modal__vrstica"><p class="modal__key">' + trenutniKey + ':</p><p class="modal__value"> ' + new Date(value).toLocaleDateString() + '</p></div>');
+  								$('.modal__wrapper').append('<div class="modal__vrstica"><p class="modal__key">' + trenutniKey + ':</p><p class="modal__value"> ' + dateFormat(new Date(value), "dd.mm.yyyy") + '</p></div>');
   						} else if (trenutniKey == 'CONTRACT-VALUE') {
-  								$('.modal__wrapper').append('<div class="modal__vrstica"><p class="modal__key">' + trenutniKey + ':</p><p class="modal__value"> ' + value.toLocaleString() + ' EUR brez DDV</p></div>');
+  								$('.modal__wrapper').append('<div class="modal__vrstica"><p class="modal__key">' + trenutniKey + ':</p><p class="modal__value"> ' + value.toLocaleString('de-DE', { style: 'decimal', minimumFractionDigits: 2 }) + ' EUR brez DDV</p></div>');
   						} else {
 									$('.modal__wrapper').append('<div class="modal__vrstica"><p class="modal__key">' + trenutniKey + ':</p><p class="modal__value"> ' + value + '</p></div>');
 							}
@@ -101,13 +99,13 @@ class Ajax {
   				var stVrstic = rezultat.length;
   				var naborProjektov = [];
 
-  				$('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: ' + stVrstic)
+  				$('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: ' + stVrstic);
   				//najprej izpis glave
   				
   				$('#t-body').empty();
 
-  				if (rezultat == 0){
-  					$('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: 0')
+  				if (rezultat === 0){
+  					$('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: 0');
   					// throw new Error("Rezultat poizvedbe je 0");
   				}
 
@@ -164,7 +162,7 @@ class Ajax {
   		}); //konec ajax
 		} else {
 			$('#t-body').empty();
-			$('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: 0')
+			$('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: 0');
 			$('.nabor-projektov').empty();
 		}
 	}

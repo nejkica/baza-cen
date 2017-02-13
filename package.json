@@ -2,6 +2,7 @@
   "name": "riko-baza-cen",
   "version": "1.0.0",
   "dependencies": {
+    "dateformat": "^2.0.0",
     "distinct-colors": "^1.0.4",
     "fs": "0.0.1-security",
     "highlight": "^0.2.4",
@@ -38,6 +39,7 @@
     "gulp-uglify": "^2.0.1",
     "gulp-usemin": "^0.3.27",
     "gulp-watch": "^4.3.5",
+    "http-auth": "^3.1.1",
     "postcss-hexrgba": "^0.2.0",
     "postcss-import": "^8.1.2",
     "postcss-mixins": "^4.0.2",

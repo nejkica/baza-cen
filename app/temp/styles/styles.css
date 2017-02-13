@@ -751,6 +751,8 @@ a {
   min-height: 200px;
   text-align: center;
   border: 1px dashed grey;
+  margin-right: 5px;
+  margin-top: 30px;
 }
 
 .modal__projekti__projekt {
@@ -778,7 +780,8 @@ a {
   font-size: 1.5rem;
   vertical-align: top;
   color: #2f5572;
-  margin: 10px 0;
+  margin: 0 0;
+  padding: 0px 0 10px 0;
 }
 
 .modal__key {
@@ -786,7 +789,8 @@ a {
   font-size: 1.1rem;
   font-weight: 600;
   width: 30%;
-  margin: 10px 0;
+  margin: 0 0;
+  padding: 5px 0 5px 5px;
   vertical-align: top;
 }
 
@@ -795,7 +799,8 @@ a {
   font-size: 1.1rem;
   font-weight: 300;
   width: 70%;
-  margin: 10px 0;
+  margin: 0;
+  padding: 5px 5px 5px 0;
   vertical-align: top;
 }
 

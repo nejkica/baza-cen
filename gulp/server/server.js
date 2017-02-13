@@ -1,6 +1,12 @@
 var sys   = require('util');
 var http  = require('http');
 var url   = require('url');
+var auth = require('http-auth');
+
+var basic = auth.basic({
+    realm: "riko",
+    file: __dirname + "/../../.passwd"
+});
 
 //require custom dispatcher
 var dispatcher = require('./dispatcher.js');
@@ -8,7 +14,7 @@ var dispatcher = require('./dispatcher.js');
 
 console.log('Strežnik @ http://localhost/');
 
-http.createServer(function (req, res) {
+http.createServer(basic, function (req, res) {
   //wrap calls in a try catch
   //or the node js server will crash upon any code errors
   try {
