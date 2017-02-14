@@ -17,6 +17,12 @@ this.dispatch = function(req, res) {
     content = null;
   };
 
+  var renderFavi = function() {
+    res.writeHead(200, {'Content-Type': 'image/x-icon'});
+    res.end();
+    // content = null;
+  };
+
   var renderJS = function(content) {
     res.writeHead(200, {'Content-Type': 'text/javascript'});
     res.end(content, 'utf-8');
@@ -29,7 +35,7 @@ this.dispatch = function(req, res) {
     content = null;
   };
 
-var renderCSS = function(content) {
+  var renderCSS = function(content) {
     res.writeHead(200, {'Content-Type': 'text/css'});
     res.end(content, 'utf-8');
     content = null;
@@ -38,6 +44,7 @@ var renderCSS = function(content) {
 
   var parts = req.url.split('/');
   var webVnos = parts[2];
+  var kljukicaCena = parts[3];
   var re;
   // console.log(parts);
 
@@ -65,7 +72,7 @@ var renderCSS = function(content) {
         re = new RegExp("%C4%8D", 'g');
         webVnos = webVnos.replace(re, 'č');
         //console.log(webVnos);
-        Psql.Cenik(webVnos, function(rezultatQ) {
+        Psql.Cenik(webVnos, kljukicaCena, function(rezultatQ) {
           //rezul = rezultatQ;
           //console.log(rezultatQ);
           renderAjax(rezultatQ);
@@ -123,13 +130,23 @@ var renderCSS = function(content) {
             serverError(500);
       }
     
+  } else if (parts[1]=='favicon.ico') { //to je zato, da se znebimo opozorila v konzoli o missing favicon.ico
+        try {
+          renderFavi();
+        
+        } catch (err) {
+          //handle errors gracefully
+          console.log('pošiljam 500 - 3 - favicon');
+          serverError(500);
+      }
+    
   } else {
 
     var drugi = req.url;
 
     fs.readFile('app'+drugi, function(error, content) {
       if (error) {
-        console.log('pošiljam 500 - 3 ../../docs'+drugi);
+        console.log('pošiljam 500 - 4 ../../docs'+drugi);
         serverError(500);
       } else {
         //console.log('pošiljam js');

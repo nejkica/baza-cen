@@ -34,12 +34,15 @@ class Ajax {
   				$.each(rezultat, function(index, item) {
   					Object.values(item).forEach(function(value) {
   						var trenutniKey = Object.keys(rezultat[0])[n];
+  						
   						if (trenutniKey == 'Projekt') {
   							$('.modal__wrapper').prepend('<div class="modal__vrstica"><p class="modal__key">' + trenutniKey + ':</p><h2 class="modal__header"> ' + value + '</h2></div>');
   						} else if (trenutniKey == 'TOC' || trenutniKey == 'PC' || trenutniKey=='DATE-OF-SIGNING') {
   								$('.modal__wrapper').append('<div class="modal__vrstica"><p class="modal__key">' + trenutniKey + ':</p><p class="modal__value"> ' + dateFormat(new Date(value), "dd.mm.yyyy") + '</p></div>');
   						} else if (trenutniKey == 'CONTRACT-VALUE') {
   								$('.modal__wrapper').append('<div class="modal__vrstica"><p class="modal__key">' + trenutniKey + ':</p><p class="modal__value"> ' + value.toLocaleString('de-DE', { style: 'decimal', minimumFractionDigits: 2 }) + ' EUR brez DDV</p></div>');
+  						} else if (trenutniKey == 'Capacity') {
+  								$('.modal__wrapper').append('<div class="modal__vrstica"><p class="modal__key">' + trenutniKey + ':</p><p class="modal__value"> ' + parseFloat(value).toLocaleString('de-DE', { style: 'decimal', minimumFractionDigits: 0 }) + ' (PE, ton/l, m3/h)</p></div>');
   						} else {
 									$('.modal__wrapper').append('<div class="modal__vrstica"><p class="modal__key">' + trenutniKey + ':</p><p class="modal__value"> ' + value + '</p></div>');
 							}
@@ -93,7 +96,7 @@ class Ajax {
 
 		if (vpisanaVrednost.length > 1) {
   		$.ajax({
-  			url: "http://localhost/sql/" + vpisanaVrednost ,
+  			url: "http://localhost/sql/" + vpisanaVrednost + "/1",
   			success: function(result) {
   				var rezultat = JSON.parse(result);
   				var stVrstic = rezultat.length;

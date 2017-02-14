@@ -742,8 +742,7 @@ a {
 }
 
 .modal__projekti {
-  position: relative;
-  display: inline;
+  position: relative;/*display: inline;*/
   background-color: rgba(216,216,216, .9);
   z-index: 10;
   float: right;/*right: 20px;*/

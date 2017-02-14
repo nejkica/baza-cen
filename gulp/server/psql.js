@@ -3,37 +3,46 @@ var pg = require('pg') ;
 
 
 //Psql.prototype.poizvedba = 
-function Cenik(vnos, callback) {
+function Cenik(vnos, kljukicaCena, callback) {
 	//console.log(vnos);
 	var rezultat = "nič";	
 	var vnosArr = vnos.split('%20');
 	//console.log(vnosArr);
 	vnosArrSQL = [];
+	var sqlQ = "";
 
-	var sqlQ = "SELECT DISTINCT ON (\"Opis\") \"Poz\",\
-	 ('<b>'||\"N1\"||'-'||\"N2\"||'-'||\"N3\"||'-'||\"N4\"\
-	 ||'-'||\"N5\"||'</b>-'||\"Opis\") AS \"Opis_z_naslovi\",\
-	  \"EM\",\"Cena\",\"Valuta\",\"Projekt\",\"Fkor\",\"Opomba\",\
-	  \"Kljuc\" FROM cenik WHERE";
+	if (kljukicaCena == 0){
+		sqlQ = "SELECT DISTINCT ON (regexp_replace(\"cenik\".\"Opis\", E\'[\\\n\\\r]+\', \'\', \'g\' )) \"cenik\".\"Poz\", ('<b>'||\"cenik\".\"N1\"||'-'||\"cenik\".\"N2\"||'-'||\"cenik\".\"N3\"||'-'||\"cenik\".\"N4\" ||'-'||\"cenik\".\"N5\"||'</b>-'||\"cenik\".\"Opis\") AS \"Opis_z_naslovi\",\"cenik\".\"EM\",\"cenik\".\"Cena\",\"cenik\".\"Valuta\",\"cenik\".\"Fkor\",\"projektir12\".\"Projekt\",\"cenik\".\"Opomba\",\"cenik\".\"Kljuc\" FROM cenik, projektir12 WHERE (\"cenik\".\"Projekt\" = \"projektir12\".\"IDp\") AND (";
 
-	for (i=0; i < vnosArr.length; i++) {
-		if ( i > 0 ) {
-			sqlQ += " AND"
+		for (i=0; i < vnosArr.length; i++) {
+			if ( i > 0 ) {
+				sqlQ += " AND";
+			}
+			sqlQ += " (LOWER(\"Opis\") LIKE LOWER($" + (i+1) + ") OR LOWER(\"N1\") LIKE LOWER($" + (i+1) + ") OR LOWER(\"N2\") LIKE LOWER($" + (i+1) + ") OR LOWER(\"N3\") LIKE LOWER($" + (i+1) + ") OR LOWER(\"N4\") LIKE LOWER($" + (i+1) + ") OR LOWER(\"N5\") LIKE LOWER($" + (i+1) + ") OR LOWER(\"projektir12\".\"Projekt\") LIKE LOWER($" + (i+1) + "))";
+
+			vnosArrSQL.push("%" + vnosArr[i] + "%");
 		}
-		sqlQ += " (LOWER(\"Opis\") LIKE LOWER($" + (i+1) + ")\
-		 OR LOWER(\"N1\") LIKE LOWER($" + (i+1) + ")\
-		  OR LOWER(\"N2\") LIKE LOWER($" + (i+1) + ")\
-		  OR LOWER(\"N3\") LIKE LOWER($" + (i+1) + ")\
-		  OR LOWER(\"N4\") LIKE LOWER($" + (i+1) + ")\
-		  OR LOWER(\"N5\") LIKE LOWER($" + (i+1) + ")\
-		  OR LOWER(\"Projekt\") LIKE LOWER($" + (i+1) + "))";
 
-		vnosArrSQL.push("%" + vnosArr[i] + "%");
+		sqlQ += ") ORDER BY regexp_replace(\"cenik\".\"Opis\", E\'[\\\n\\\r]+', '', 'g' ) LIMIT 200";
+		//console.log(sqlQ);
+		// var sqlVnos = "%" + vnos + "%";
+	} else if (kljukicaCena == 1){
+		sqlQ = "SELECT DISTINCT ON (\"cenik\".\"Cena\") \"cenik\".\"Poz\", ('<b>'||\"cenik\".\"N1\"||'-'||\"cenik\".\"N2\"||'-'||\"cenik\".\"N3\"||'-'||\"cenik\".\"N4\" ||'-'||\"cenik\".\"N5\"||'</b>-'||\"cenik\".\"Opis\") AS \"Opis_z_naslovi\",\"cenik\".\"EM\",\"cenik\".\"Cena\",\"cenik\".\"Valuta\",\"cenik\".\"Fkor\",\"projektir12\".\"Projekt\",\"cenik\".\"Opomba\",\"cenik\".\"Kljuc\" FROM cenik, projektir12 WHERE \"cenik\".\"ID\" IN (SELECT DISTINCT ON (regexp_replace(\"cenik\".\"Opis\", E\'[\\\n\\\r]+\', \'\', \'g\' )) \"cenik\".\"ID\" FROM cenik, projektir12 WHERE (\"cenik\".\"Projekt\" = \"projektir12\".\"IDp\") AND (";
+
+		for (i=0; i < vnosArr.length; i++) {
+			if ( i > 0 ) {
+				sqlQ += " AND";
+			}
+			sqlQ += " (LOWER(\"Opis\") LIKE LOWER($" + (i+1) + ") OR LOWER(\"N1\") LIKE LOWER($" + (i+1) + ") OR LOWER(\"N2\") LIKE LOWER($" + (i+1) + ") OR LOWER(\"N3\") LIKE LOWER($" + (i+1) + ") OR LOWER(\"N4\") LIKE LOWER($" + (i+1) + ") OR LOWER(\"N5\") LIKE LOWER($" + (i+1) + ") OR LOWER(\"projektir12\".\"Projekt\") LIKE LOWER($" + (i+1) + "))";
+
+			vnosArrSQL.push("%" + vnosArr[i] + "%");
+		}
+
+		sqlQ += ")) AND (\"cenik\".\"Projekt\" = \"projektir12\".\"IDp\")"; 
+		// ORDER BY regexp_replace(\"cenik\".\"Opis\", E\'[\\\n\\\r]+', '', 'g' )) LIMIT 200";
+		console.log(sqlQ);
+		// var sqlVnos = "%" + vnos + "%";
 	}
-
-	sqlQ += " ORDER BY \"Opis\" LIMIT 200";
-	//console.log(sqlQ);
-	// var sqlVnos = "%" + vnos + "%";
 
 	Query(sqlQ, vnosArrSQL, function(rezultat) {
 		callback(rezultat);
