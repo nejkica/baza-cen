@@ -54,16 +54,17 @@
 
 	var _Ajax2 = _interopRequireDefault(_Ajax);
 
-	var _KlikNaProjekt = __webpack_require__(7);
+	var _KlikNaProjekt = __webpack_require__(8);
 
 	var _KlikNaProjekt2 = _interopRequireDefault(_KlikNaProjekt);
 
-	var _Modal = __webpack_require__(8);
+	var _Modal = __webpack_require__(9);
 
 	var _Modal2 = _interopRequireDefault(_Modal);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	// import GumbCena from './modules/GumbCena';
 	// import delay from './modules/InputDelay';
 	//import StickyHeader from './modules/StickyHeader';
 	//import Psql from './modules/Psql';
@@ -74,6 +75,7 @@
 	var ajax = new _Ajax2.default();
 	var klikNaProjekt = new _KlikNaProjekt2.default();
 	var modal = new _Modal2.default();
+	// var gumbCena = new GumbCena();
 
 /***/ },
 /* 1 */
@@ -9923,6 +9925,10 @@
 
 	var _RandomColor2 = _interopRequireDefault(_RandomColor);
 
+	var _GumbCena = __webpack_require__(7);
+
+	var _GumbCena2 = _interopRequireDefault(_GumbCena);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -9931,6 +9937,7 @@
 	  function Ajax() {
 	    _classCallCheck(this, Ajax);
 
+	    this.distinctCena = 0;
 	    this.ajaxBtn = (0, _jquery2.default)(".btn");
 	    this.inputOpis = (0, _jquery2.default)("#inputOpis");
 	    this.izbraniProjekt = (0, _jquery2.default)(".modal__projekti");
@@ -10021,13 +10028,19 @@
 	  }, {
 	    key: 'cenikAjax',
 	    value: function cenikAjax() {
-
+	      var that = this;
 	      var vpisanaVrednost = (0, _jquery2.default)(".site-header__elements__input__field").val().toLowerCase();
 	      var vpisanaVrednostArr = vpisanaVrednost.split(" ");
-
+	      var dodajCeniStil = "rezultati__gumb-cena--vklopljen";
+	      // console.log(vpisanaVrednostArr);
 	      if (vpisanaVrednost.length > 1) {
+
+	        if (that.distinctCena == 0) {
+	          dodajCeniStil = "";
+	        }
+
 	        _jquery2.default.ajax({
-	          url: "http://localhost/sql/" + vpisanaVrednost + "/1",
+	          url: "http://localhost/sql/" + vpisanaVrednost + "/" + that.distinctCena,
 	          success: function success(result) {
 	            var rezultat = JSON.parse(result);
 	            var stVrstic = rezultat.length;
@@ -10045,9 +10058,25 @@
 
 	            (0, _jquery2.default)('#t-naslovna-vrstica').empty();
 	            Object.keys(rezultat[0]).forEach(function (k) {
-	              k = k.replace(/_/g, " ");
-	              (0, _jquery2.default)('#t-naslovna-vrstica').append('<th class="table--header--th">' + k + '</th>');
+	              k = k.replace(/_/g, " "); // zato, ker imena v sql stolpcih niso s presledki
+
+	              (0, _jquery2.default)('#t-naslovna-vrstica').append('<th class="table--header--th" id="th-' + k + '">' + k + '</th>');
+
+	              if (k == "Cena") {
+	                (0, _jquery2.default)('#th-Cena').empty();
+	                (0, _jquery2.default)('#th-Cena').append("<a href=# class=\"rezultati__gumb-cena " + dodajCeniStil + "\" id=\"gumb-cena\">" + k + "</a>");
+	              }
 	            });
+
+	            var gumbCena = new _GumbCena2.default(function (res) {
+	              // console.log('prišlo' + res);
+	              if (res == 1) {
+	                that.distinctCena = 0;
+	              } else if (res == 0) {
+	                that.distinctCena = 1;
+	              }
+	            }); //mora biti tukaj, ker je dinamično narejen gumb in ga drugače ne morem togglat
+
 
 	            //potem izpis rezultatov
 	            (0, _jquery2.default)('.nabor-projektov').empty();
@@ -14003,6 +14032,73 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+	var GumbCena = function () {
+		function GumbCena(callback) {
+			_classCallCheck(this, GumbCena);
+
+			this.gumbCena = (0, _jquery2.default)('#th-Cena');
+			this.inputOpis = (0, _jquery2.default)("#inputOpis"); //ga rabim zaradi triggerja za stolpec cena - da mi da distinct ceno query
+			this.events();
+			this.cb = callback;
+		}
+
+		_createClass(GumbCena, [{
+			key: 'events',
+			value: function events() {
+				var that = this;
+				this.gumbCena.on('click', '#gumb-cena', function () {
+					that.toggleGumb();
+				});
+			}
+		}, {
+			key: 'toggleGumb',
+			value: function toggleGumb() {
+				var distinctCena = 0;
+				(0, _jquery2.default)('#gumb-cena').toggleClass('rezultati__gumb-cena--vklopljen');
+				// console.log($('#gumb-cena').is('.rezultati__gumb-cena--vklopljen'));
+				if ((0, _jquery2.default)('#gumb-cena').is('.rezultati__gumb-cena--vklopljen') == true) {
+					distinctCena = 0;
+				} else {
+					distinctCena = 1;
+				}
+
+				this.triggerSQL(distinctCena);
+			}
+		}, {
+			key: 'triggerSQL',
+			value: function triggerSQL(dc) {
+				// console.log(dc);
+
+				this.inputOpis.keyup();
+				this.cb(dc);
+			}
+		}]);
+
+		return GumbCena;
+	}();
+
+	exports.default = GumbCena;
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _jquery = __webpack_require__(1);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 	var KlikNaProjekt = function () {
 		function KlikNaProjekt() {
 			_classCallCheck(this, KlikNaProjekt);
@@ -14033,7 +14129,7 @@
 	exports.default = KlikNaProjekt;
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";

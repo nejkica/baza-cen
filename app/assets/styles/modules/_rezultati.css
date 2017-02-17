@@ -1,7 +1,22 @@
 .rezultati {
-	position: relative;
-	padding-top: 50px;
 	min-height: 500px;
+	padding-top: 50px;
+	position: relative;
 
+	&__gumb-cena {
+		color: #FFF;
+		background-color: $mainBlue;
+		border-radius: 5px;
+		padding: 5px;
+		margin: 0;
+		width: 100%;
+		text-decoration: none;
+
+	}
+
+	&__gumb-cena--vklopljen {
+		background-color: rgba($mainGreen, 0.5);
+		border-radius: 5px;
+	}
 
 }

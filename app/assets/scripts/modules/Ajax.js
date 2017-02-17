@@ -2,9 +2,12 @@ import $ from 'jquery';
 import dateFormat from 'dateformat';
 import Delay from './InputDelay';
 import RandomColor from './RandomColor';
+import GumbCena from './GumbCena';
+
 
 class Ajax {
 	constructor() {
+    this.distinctCena = 0;
 		this.ajaxBtn = $(".btn");
 		this.inputOpis = $("#inputOpis");
 		this.izbraniProjekt = $(".modal__projekti");
@@ -90,13 +93,19 @@ class Ajax {
 	}
 
   cenikAjax() { 
-  	
+  	var that = this;
 		var vpisanaVrednost = $(".site-header__elements__input__field").val().toLowerCase();
 		var vpisanaVrednostArr = vpisanaVrednost.split(" ");
-
+    var dodajCeniStil = "rezultati__gumb-cena--vklopljen";
+    // console.log(vpisanaVrednostArr);
 		if (vpisanaVrednost.length > 1) {
+
+      if (that.distinctCena == 0) {
+        dodajCeniStil = "";
+      } 
+
   		$.ajax({
-  			url: "http://localhost/sql/" + vpisanaVrednost + "/1",
+  			url: "http://localhost/sql/" + vpisanaVrednost + "/" + that.distinctCena,
   			success: function(result) {
   				var rezultat = JSON.parse(result);
   				var stVrstic = rezultat.length;
@@ -114,9 +123,27 @@ class Ajax {
 
   				$('#t-naslovna-vrstica').empty();
   				Object.keys(rezultat[0]).forEach(function(k) {
-  					k = k.replace(/_/g, " ");
-  					$('#t-naslovna-vrstica').append('<th class="table--header--th">' + k + '</th>');
-  				});
+  					k = k.replace(/_/g, " "); // zato, ker imena v sql stolpcih niso s presledki
+
+            $('#t-naslovna-vrstica').append('<th class="table--header--th" id="th-'+ k +'">' + k + '</th>');
+            
+            if (k=="Cena") {
+              $('#th-Cena').empty();
+              $('#th-Cena').append("<a href=# class=\"rezultati__gumb-cena " + dodajCeniStil + "\" id=\"gumb-cena\">" + k + "</a>" );
+  				  }
+          });
+
+          var gumbCena = new GumbCena(function(res) {
+            // console.log('prišlo' + res);
+            if (res == 1) {
+              that.distinctCena = 0;
+            } else if (res == 0) {
+              that.distinctCena = 1;
+            }
+
+          }); //mora biti tukaj, ker je dinamično narejen gumb in ga drugače ne morem togglat
+          
+          
 
   				//potem izpis rezultatov
   				$('.nabor-projektov').empty();
@@ -140,9 +167,8 @@ class Ajax {
 
 									 var zamenjajZ = '<span>' + vpisanaVrednostArr[i] + '</span>';
 									if (iskaniStr.length > 1){
-										var iskaniStrRegEx = new RegExp(iskaniStr, "ig");
-										vrednost = vrednost.replace(iskaniStrRegEx, zamenjajZ);
-
+  								  var iskaniStrRegEx = new RegExp(iskaniStr, "ig");
+                    vrednost = vrednost.replace(iskaniStrRegEx, zamenjajZ);
 									}
 								}
 							} //--- konec ---tukaj highlight-amo iskani niz
@@ -170,6 +196,6 @@ class Ajax {
 		}
 	}
 
-
 }
+
 export default Ajax;

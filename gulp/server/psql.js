@@ -40,7 +40,7 @@ function Cenik(vnos, kljukicaCena, callback) {
 
 		sqlQ += ")) AND (\"cenik\".\"Projekt\" = \"projektir12\".\"IDp\")"; 
 		// ORDER BY regexp_replace(\"cenik\".\"Opis\", E\'[\\\n\\\r]+', '', 'g' )) LIMIT 200";
-		console.log(sqlQ);
+		// console.log(sqlQ);
 		// var sqlVnos = "%" + vnos + "%";
 	}
 
