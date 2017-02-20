@@ -3,6 +3,7 @@ import dateFormat from 'dateformat';
 import Delay from './InputDelay';
 import RandomColor from './RandomColor';
 import GumbCena from './GumbCena';
+import io from 'socket.io-client';
 
 
 class Ajax {
@@ -11,6 +12,7 @@ class Ajax {
 		this.ajaxBtn = $(".btn");
 		this.inputOpis = $("#inputOpis");
 		this.izbraniProjekt = $(".modal__projekti");
+    this.socket = io.connect('http://localhost:8888');
 		this.vpisZnaka();
 		this.projektiAjax();
 		this.projektAjax();
@@ -103,37 +105,30 @@ class Ajax {
       if (that.distinctCena == 0) {
         dodajCeniStil = "";
       } 
+      $('#t-naslovna-vrstica').empty();
+      $('.nabor-projektov').empty();
+      $('#t-body').empty();
+      
+      var stVrstic = 0;
+      
+      that.socket.emit('sql', { vpisanaVrednost: vpisanaVrednost, distinctCena : that.distinctCena});
+      that.socket.on('vrnjeno', function(data){
+          stVrstic += 1;
+          if (stVrstic == 1) {
+            Object.keys(data).forEach(function(k) {
 
-  		$.ajax({
-  			url: "http://localhost/sql/" + vpisanaVrednost + "/" + that.distinctCena,
-  			success: function(result) {
-  				var rezultat = JSON.parse(result);
-  				var stVrstic = rezultat.length;
-  				var naborProjektov = [];
-
-  				$('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: ' + stVrstic);
-  				//najprej izpis glave
-  				
-  				$('#t-body').empty();
-
-  				if (rezultat === 0){
-  					$('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: 0');
-  					// throw new Error("Rezultat poizvedbe je 0");
-  				}
-
-  				$('#t-naslovna-vrstica').empty();
-  				Object.keys(rezultat[0]).forEach(function(k) {
-  					k = k.replace(/_/g, " "); // zato, ker imena v sql stolpcih niso s presledki
-
+            k = k.replace(/_/g, " "); // zato, ker imena v sql stolpcih niso s presledki
+            console.log(k);
+            // $('#t-naslovna-vrstica').append(k);
             $('#t-naslovna-vrstica').append('<th class="table--header--th" id="th-'+ k +'">' + k + '</th>');
             
             if (k=="Cena") {
               $('#th-Cena').empty();
               $('#th-Cena').append("<a href=# class=\"rezultati__gumb-cena " + dodajCeniStil + "\" id=\"gumb-cena\">" + k + "</a>" );
-  				  }
+            }
           });
 
-          var gumbCena = new GumbCena(function(res) {
+            var gumbCena = new GumbCena(function(res) {
             // console.log('prišlo' + res);
             if (res == 1) {
               that.distinctCena = 0;
@@ -141,54 +136,23 @@ class Ajax {
               that.distinctCena = 1;
             }
 
-          }); //mora biti tukaj, ker je dinamično narejen gumb in ga drugače ne morem togglat
-          
-          
+          });
+          }
 
-  				//potem izpis rezultatov
-  				$('.nabor-projektov').empty();
-  				$.each(rezultat, function(index, item) {
-  					$('#t-body').append('<tr class="table--body--row" id="row-' + index + '"></tr>');
-  					
-  					var m = 0;
+          $('#t-body').append('<tr class="table--body--row" id="row-' + stVrstic + '"></tr>');
 
-  					Object.values(item).forEach(function(value) {
-  						var vrednost = value;
-  						var idVrstice = "#row-" + index;
-  						var trenutniKey = Object.keys(item)[m];
-  						
-  						$(idVrstice).append('<td class="table--td--' + trenutniKey + '-' + index + '"></td>'); 
-							var selTd = '.table--td--' + Object.keys(item)[m] + '-' + index;
-							
-							if ((selTd.indexOf("Opis_z_naslovi") >= 0) || (selTd.indexOf("Projekt") >= 0)){ //tukaj highlight-amo iskani niz
-								
-								for (var i=0; i < vpisanaVrednostArr.length; i++) {
-									var iskaniStr = vpisanaVrednostArr[i];
-
-									 var zamenjajZ = '<span>' + vpisanaVrednostArr[i] + '</span>';
-									if (iskaniStr.length > 1){
-  								  var iskaniStrRegEx = new RegExp(iskaniStr, "ig");
-                    vrednost = vrednost.replace(iskaniStrRegEx, zamenjajZ);
-									}
-								}
-							} //--- konec ---tukaj highlight-amo iskani niz
-
-							$(selTd).append(vrednost);		
-
-							if ((trenutniKey == 'Projekt') && ($.inArray(value, naborProjektov) == -1)) {
-								naborProjektov.push(value);
-								$('.nabor-projektov').append('<a href="#" class="nabor-projektov__projekt" id="open-modal">' + value + '</a>');
-							}
-  						m +=1;
-  					}); //--- konec --- each item (zapis vsakega elementa JSON objekta za vsako vrstico )
-  					
-  				}); //--- konec ---each rezultat (vrstica)
-
-  			}, // --- konec --- success ajaxa
-  			error: function (jqXHR, exception) {
-				        console.log(jqXHR.status + ' ' + exception );
-				    	}
-  		}); //konec ajax
+          // console.log(rezultat);
+          var naborProjektov = [];
+      });
+      that.socket.on('zadnjaVrstica', function(){
+          $('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: ' + stVrstic);
+          stVrstic = 0;
+          console.log('konec cl');
+          that.socket.disconnect(true);
+          that.socket = io.connect('http://localhost:8888');
+      });
+      
+  		
 		} else {
 			$('#t-body').empty();
 			$('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: 0');

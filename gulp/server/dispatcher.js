@@ -1,5 +1,6 @@
 var fs = require('fs');
 var Psql = require('./psql');
+var io = require('socket.io')(8888);
 //var psql = new Psql();
 
 this.dispatch = function(req, res) {
@@ -72,6 +73,7 @@ this.dispatch = function(req, res) {
         re = new RegExp("%C4%8D", 'g');
         webVnos = webVnos.replace(re, 'č');
         //console.log(webVnos);
+        
         Psql.Cenik(webVnos, kljukicaCena, function(rezultatQ) {
           //rezul = rezultatQ;
           //console.log(rezultatQ);
@@ -147,6 +149,7 @@ this.dispatch = function(req, res) {
     fs.readFile('app'+drugi, function(error, content) {
       if (error) {
         console.log('pošiljam 500 - 4 ../../docs'+drugi);
+
         serverError(500);
       } else {
         //console.log('pošiljam js');
@@ -155,3 +158,29 @@ this.dispatch = function(req, res) {
     });
   }
 };
+
+io.sockets.on('connection', function (socket) {
+            socket.on('sql', function (data) {
+              // console.log (data);
+              var vrstic = 0;
+              Psql.Cenik(data.vpisanaVrednost, data.distinctCena, function(rezultatQ) {
+                if (rezultatQ == 'konec') {
+                  socket.emit('zadnjaVrstica', rezultatQ);
+                  console.log(vrstic);
+                  vrstic = 0;
+                }
+                else {
+                  socket.emit('vrnjeno', rezultatQ);
+                  vrstic += 1;
+                }
+                rezultatQ = '';
+              });
+              // socket.disconnect(true);
+            });
+
+            socket.on('end', function() {
+              console.log('zakljuceno');
+              socket.emit('end');
+            });
+
+        });

@@ -101,14 +101,27 @@ function Query (sqlSt, arrSpremenljivk, cb) {
 		}
 		
 //	var query = client.query("SELECT * FROM cenik WHERE \"Opis\" LIKE $1", [sqlVnos], function(err, result){
-	client.query(sqlSt, arrSpremenljivk, function(err, result){
-		done();
-		if(err) {
-	      return console.error('query ni uspel', err);
-	    }
-		var rezultat = JSON.stringify(result.rows, null, "   ");
-		cb(rezultat);
+	var kveri = client.query(sqlSt, arrSpremenljivk);
+	kveri.on('row', function(row){
+		
+		cb(row);
 	});
+
+	kveri.on('end', function(){
+		console.log('koncano');
+		cb('konec');
+	});
+
+
+
+	// client.query(sqlSt, arrSpremenljivk, function(err, result){
+	// 	done();
+	// 	if(err) {
+	//       return console.error('query ni uspel', err);
+	//     }
+	// 	var rezultat = JSON.stringify(result.rows, null, "   ");
+	// 	cb(rezultat);
+	// });
 
 	pool.on('error', function(error) {
       console.log(error);

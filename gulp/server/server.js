@@ -3,6 +3,7 @@ var http  = require('http');
 var url   = require('url');
 var auth = require('http-auth');
 
+
 var basic = auth.basic({
     realm: "riko",
     file: __dirname + "/../../.passwd"
@@ -39,3 +40,4 @@ http.createServer(basic, function (req, res) {
     //runs when our server is created
     console.log('Server running at http://localhost:80');
   });
+
