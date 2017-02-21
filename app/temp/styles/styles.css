@@ -784,7 +784,7 @@ a {
   position: absolute;/*display: inline;*/
   z-index: 9;
   float: left;
-  max-width: 75%;
+  width: 75%;
 }
 
 .modal__header {

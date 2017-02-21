@@ -6,7 +6,7 @@ var pg = require('pg') ;
 function Cenik(vnos, kljukicaCena, callback) {
 	//console.log(vnos);
 	var rezultat = "nič";	
-	var vnosArr = vnos.split('%20');
+	var vnosArr = vnos.split(' ');
 	//console.log(vnosArr);
 	vnosArrSQL = [];
 	var sqlQ = "";
@@ -82,13 +82,13 @@ function Projekt(vnos, callback) {
 function Query (sqlSt, arrSpremenljivk, cb) {
 
 	var config = {
-		user: 'postgres', //env var: PGUSER 
-		database: 'BazaCenikov', //env var: PGDATABASE 
-		password: 'kookaburra@72', //env var: PGPASSWORD 
-		host: 'kookaburra.si', // Server hosting the postgres database 
-		port: 5432, //env var: PGPORT 
-		max: 10, // max number of clients in the pool 
-		idleTimeoutMillis: 30000 // how long a client is allowed to remain idle before being closed 
+		user: 'postgres', 				//env var: PGUSER 
+		database: 'BazaCenikov', 		//env var: PGDATABASE 
+		password: 'kookaburra@72', 		//env var: PGPASSWORD 
+		host: 'kookaburra.si', 			// Server hosting the postgres database 
+		port: 5432, 					//env var: PGPORT 
+		max: 10, 						// max number of clients in the pool 
+		idleTimeoutMillis: 30000 		// how long a client is allowed to remain idle before being closed 
 	};
 
 
