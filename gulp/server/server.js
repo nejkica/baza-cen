@@ -16,8 +16,6 @@ var dispatcher = require('./dispatcher.js');
 console.log('Strežnik @ http://localhost/');
 
 http.createServer(basic, function (req, res) {
-  //wrap calls in a try catch
-  //or the node js server will crash upon any code errors
   try {
     //pipe some details to the node console
     console.log('Incoming Request from: ' +

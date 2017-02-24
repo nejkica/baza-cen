@@ -13,8 +13,8 @@ class KlikNaProjekt {
 		this.naborProjektov.on('click', '.nabor-projektov__projekt', function(){
 			var izbraniProjekt = $(this).text();
 			var zacetnaVrednostinputa = that.inputOpis.val();
-			console.log(izbraniProjekt + " " + zacetnaVrednostinputa);
-			that.inputOpis.val(zacetnaVrednostinputa + " " + izbraniProjekt + " ");
+			// console.log(izbraniProjekt + " " + zacetnaVrednostinputa);
+			that.inputOpis.val(zacetnaVrednostinputa + " \"" + izbraniProjekt + "\" ");
 			that.inputOpis.trigger('keyup');
 		});
 		

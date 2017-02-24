@@ -64,18 +64,9 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	// import GumbCena from './modules/GumbCena';
-	// import delay from './modules/InputDelay';
-	//import StickyHeader from './modules/StickyHeader';
-	//import Psql from './modules/Psql';
-
-	//var stickyHeader = new StickyHeader();
-	//var psql = new Psql();
-
 	var ajax = new _Ajax2.default();
 	var klikNaProjekt = new _KlikNaProjekt2.default();
 	var modal = new _Modal2.default();
-	// var gumbCena = new GumbCena();
 
 /***/ },
 /* 1 */
@@ -10032,9 +10023,26 @@
 	    value: function cenikAjax() {
 	      var that = this;
 	      var vpisanaVrednost = (0, _jquery2.default)(".site-header__elements__input__field").val().toLowerCase();
+
+	      var vvVmesna = [];
+	      var vVArrNarekovaj = vpisanaVrednost.match(/\"(.*?)\"/gi); // array besed v narekovajih
+
+	      if (vVArrNarekovaj !== null) {
+	        //odstranjujemo besede, ki so v narekovajih ...
+	        vVArrNarekovaj.forEach(function (entry) {
+	          var i = vVArrNarekovaj.indexOf(entry);
+	          // console.log(i + " " + entry);
+	          vpisanaVrednost = vpisanaVrednost.replace(entry, '');
+	          vVArrNarekovaj[i] = vVArrNarekovaj[i].replace(/\"/g, "");
+	        });
+	      }
+	      // console.log(vpisanaVrednost);
+
 	      var vpisanaVrednostArr = vpisanaVrednost.split(" ");
+	      vpisanaVrednostArr = this.cleanArray(vpisanaVrednostArr.concat(vVArrNarekovaj)); // ... in jih tukaj dodamo
+
 	      var dodajCeniStil = "rezultati__gumb-cena--vklopljen";
-	      // console.log(vpisanaVrednostArr);
+
 	      if (vpisanaVrednost.length > 1) {
 
 	        if (that.distinctCena == 0) {
@@ -10044,7 +10052,7 @@
 	        var stVrstic = 0;
 	        var naborProjektov = [];
 
-	        that.socket.emit('sql', { vpisanaVrednost: vpisanaVrednost, distinctCena: that.distinctCena });
+	        that.socket.emit('sql', { vpisanaVrednost: vpisanaVrednostArr, distinctCena: that.distinctCena });
 	        that.socket.on('vrnjeno', function (data) {
 	          stVrstic += 1;
 	          if (stVrstic == 1) {
@@ -10093,14 +10101,15 @@
 	                var iskaniStr = vpisanaVrednostArr[i];
 
 	                var zamenjajZ = '<span>' + vpisanaVrednostArr[i] + '</span>';
-	                if (iskaniStr.length > 1) {
+	                if (iskaniStr.length > 0) {
 	                  var iskaniStrRegEx = new RegExp(iskaniStr, "ig");
 	                  vrednost = vrednost.replace(iskaniStrRegEx, zamenjajZ);
 	                }
 	              }
-	            } else if (selTd.indexOf("Cena") >= 0 || selTd.indexOf("Fkor") >= 0) {
+	            } else if (selTd.indexOf("Cena") >= 0 || selTd.indexOf("Fkor") >= 0 || selTd.indexOf("cenaEUR") >= 0) {
 	              // vrednost = vrednost.toFixed(2);
 	              vrednost = vrednost.toLocaleString(undefined, { minimumFractionDigits: 2 });
+	              (0, _jquery2.default)(selTd).css("text-align", "right");
 	            }
 
 	            (0, _jquery2.default)(selTd).append(vrednost);
@@ -10127,6 +10136,17 @@
 	        (0, _jquery2.default)('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: 0');
 	        (0, _jquery2.default)('.nabor-projektov').empty();
 	      }
+	    }
+	  }, {
+	    key: 'cleanArray',
+	    value: function cleanArray(actual) {
+	      var newArray = new Array();
+	      for (var i = 0; i < actual.length; i++) {
+	        if (actual[i]) {
+	          newArray.push(actual[i]);
+	        }
+	      }
+	      return newArray;
 	    }
 	  }]);
 
@@ -22835,8 +22855,8 @@
 				this.naborProjektov.on('click', '.nabor-projektov__projekt', function () {
 					var izbraniProjekt = (0, _jquery2.default)(this).text();
 					var zacetnaVrednostinputa = that.inputOpis.val();
-					console.log(izbraniProjekt + " " + zacetnaVrednostinputa);
-					that.inputOpis.val(zacetnaVrednostinputa + " " + izbraniProjekt + " ");
+					// console.log(izbraniProjekt + " " + zacetnaVrednostinputa);
+					that.inputOpis.val(zacetnaVrednostinputa + " \"" + izbraniProjekt + "\" ");
 					that.inputOpis.trigger('keyup');
 				});
 			}

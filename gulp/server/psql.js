@@ -6,13 +6,14 @@ var pg = require('pg') ;
 function Cenik(vnos, kljukicaCena, callback) {
 	//console.log(vnos);
 	var rezultat = "nič";	
-	var vnosArr = vnos.split(' ');
-	//console.log(vnosArr);
+
+	var vnosArr = vnos;
+	// console.log(vnosArr);
 	vnosArrSQL = [];
 	var sqlQ = "";
 
 	if (kljukicaCena == 0){
-		sqlQ = "SELECT DISTINCT ON (regexp_replace(\"cenik\".\"Opis\", E\'[\\\n\\\r]+\', \'\', \'g\' )) \"cenik\".\"Poz\", ('<b>'||\"cenik\".\"N1\"||'-'||\"cenik\".\"N2\"||'-'||\"cenik\".\"N3\"||'-'||\"cenik\".\"N4\" ||'-'||\"cenik\".\"N5\"||'</b>-'||\"cenik\".\"Opis\") AS \"Opis_z_naslovi\",\"cenik\".\"EM\",\"cenik\".\"Cena\",\"cenik\".\"Valuta\",\"cenik\".\"Fkor\",\"projektir12\".\"Projekt\",\"cenik\".\"Opomba\",\"cenik\".\"Kljuc\" FROM cenik, projektir12 WHERE (\"cenik\".\"Projekt\" = \"projektir12\".\"IDp\") AND (";
+		sqlQ = "SELECT DISTINCT ON (regexp_replace(\"cenik\".\"Opis\", E\'[\\\n\\\r]+\', \'\', \'g\' )) \"cenik\".\"Poz\", ('<b>'||\"cenik\".\"N1\"||'-'||\"cenik\".\"N2\"||'-'||\"cenik\".\"N3\"||'-'||\"cenik\".\"N4\" ||'-'||\"cenik\".\"N5\"||'</b>-'||\"cenik\".\"Opis\") AS \"Opis_z_naslovi\",\"cenik\".\"EM\",\"cenik\".\"Cena\",\"cenik\".\"Valuta\",\"cenik\".\"Fkor\",\"projektir12\".\"Projekt\",\"cenik\".\"cenaEUR\",\"cenik\".\"Kljuc\" FROM cenik, projektir12 WHERE (\"cenik\".\"Projekt\" = \"projektir12\".\"IDp\") AND (";
 
 		for (i=0; i < vnosArr.length; i++) {
 			if ( i > 0 ) {
@@ -27,7 +28,7 @@ function Cenik(vnos, kljukicaCena, callback) {
 		//console.log(sqlQ);
 		// var sqlVnos = "%" + vnos + "%";
 	} else if (kljukicaCena == 1){
-		sqlQ = "SELECT DISTINCT ON (\"cenik\".\"Cena\") \"cenik\".\"Poz\", ('<b>'||\"cenik\".\"N1\"||'-'||\"cenik\".\"N2\"||'-'||\"cenik\".\"N3\"||'-'||\"cenik\".\"N4\" ||'-'||\"cenik\".\"N5\"||'</b>-'||\"cenik\".\"Opis\") AS \"Opis_z_naslovi\",\"cenik\".\"EM\",\"cenik\".\"Cena\",\"cenik\".\"Valuta\",\"cenik\".\"Fkor\",\"projektir12\".\"Projekt\",\"cenik\".\"Opomba\",\"cenik\".\"Kljuc\" FROM cenik, projektir12 WHERE \"cenik\".\"ID\" IN (SELECT DISTINCT ON (regexp_replace(\"cenik\".\"Opis\", E\'[\\\n\\\r]+\', \'\', \'g\' )) \"cenik\".\"ID\" FROM cenik, projektir12 WHERE (\"cenik\".\"Projekt\" = \"projektir12\".\"IDp\") AND (";
+		sqlQ = "SELECT DISTINCT ON (\"cenik\".\"Cena\") \"cenik\".\"Poz\", ('<b>'||\"cenik\".\"N1\"||'-'||\"cenik\".\"N2\"||'-'||\"cenik\".\"N3\"||'-'||\"cenik\".\"N4\" ||'-'||\"cenik\".\"N5\"||'</b>-'||\"cenik\".\"Opis\") AS \"Opis_z_naslovi\",\"cenik\".\"EM\",\"cenik\".\"Cena\",\"cenik\".\"Valuta\",\"cenik\".\"Fkor\",\"projektir12\".\"Projekt\",\"cenik\".\"cenaEUR\",\"cenik\".\"Kljuc\" FROM cenik, projektir12 WHERE \"cenik\".\"ID\" IN (SELECT DISTINCT ON (regexp_replace(\"cenik\".\"Opis\", E\'[\\\n\\\r]+\', \'\', \'g\' )) \"cenik\".\"ID\" FROM cenik, projektir12 WHERE (\"cenik\".\"Projekt\" = \"projektir12\".\"IDp\") AND (";
 
 		for (i=0; i < vnosArr.length; i++) {
 			if ( i > 0 ) {
@@ -38,7 +39,7 @@ function Cenik(vnos, kljukicaCena, callback) {
 			vnosArrSQL.push("%" + vnosArr[i] + "%");
 		}
 
-		sqlQ += ")) AND (\"cenik\".\"Projekt\" = \"projektir12\".\"IDp\")"; 
+		sqlQ += ")) AND (\"cenik\".\"Projekt\" = \"projektir12\".\"IDp\") LIMIT 200"; 
 		// ORDER BY regexp_replace(\"cenik\".\"Opis\", E\'[\\\n\\\r]+', '', 'g' )) LIMIT 200";
 		// console.log(sqlQ);
 		// var sqlVnos = "%" + vnos + "%";
@@ -108,6 +109,7 @@ function Query (sqlSt, arrSpremenljivk, cb) {
 	});
 
 	kveri.on('end', function(){
+		done();
 		console.log('koncano');
 		cb('konec');
 	});
