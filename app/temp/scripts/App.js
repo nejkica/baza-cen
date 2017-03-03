@@ -9935,6 +9935,7 @@
 	    this.distinctCena = 0;
 	    this.ajaxBtn = (0, _jquery2.default)(".btn");
 	    this.inputOpis = (0, _jquery2.default)("#inputOpis");
+	    this.inputOpis.focus();
 	    this.izbraniProjekt = (0, _jquery2.default)(".modal__projekti");
 	    this.socket = _socket2.default.connect('http://localhost:8888');
 	    this.vpisZnaka();
@@ -10023,27 +10024,25 @@
 	    value: function cenikAjax() {
 	      var that = this;
 	      var vpisanaVrednost = (0, _jquery2.default)(".site-header__elements__input__field").val().toLowerCase();
-
-	      var vvVmesna = [];
+	      var stZnakovVpolju = vpisanaVrednost.length;
+	      // var vvVmesna = [];
 	      var vVArrNarekovaj = vpisanaVrednost.match(/\"(.*?)\"/gi); // array besed v narekovajih
 
 	      if (vVArrNarekovaj !== null) {
 	        //odstranjujemo besede, ki so v narekovajih ...
 	        vVArrNarekovaj.forEach(function (entry) {
 	          var i = vVArrNarekovaj.indexOf(entry);
-	          // console.log(i + " " + entry);
 	          vpisanaVrednost = vpisanaVrednost.replace(entry, '');
 	          vVArrNarekovaj[i] = vVArrNarekovaj[i].replace(/\"/g, "");
 	        });
 	      }
-	      // console.log(vpisanaVrednost);
 
 	      var vpisanaVrednostArr = vpisanaVrednost.split(" ");
 	      vpisanaVrednostArr = this.cleanArray(vpisanaVrednostArr.concat(vVArrNarekovaj)); // ... in jih tukaj dodamo
-
+	      console.log(vpisanaVrednostArr.length);
 	      var dodajCeniStil = "rezultati__gumb-cena--vklopljen";
 
-	      if (vpisanaVrednost.length > 1) {
+	      if (stZnakovVpolju > 1) {
 
 	        if (that.distinctCena == 0) {
 	          dodajCeniStil = "";
@@ -10052,7 +10051,7 @@
 	        var stVrstic = 0;
 	        var naborProjektov = [];
 
-	        that.socket.emit('sql', { vpisanaVrednost: vpisanaVrednostArr, distinctCena: that.distinctCena });
+	        that.socket.emit('sql', { vpisanaVrednostSQL: vpisanaVrednostArr, distinctCena: that.distinctCena });
 	        that.socket.on('vrnjeno', function (data) {
 	          stVrstic += 1;
 	          if (stVrstic == 1) {
@@ -10062,8 +10061,6 @@
 	            Object.keys(data).forEach(function (k) {
 
 	              k = k.replace(/_/g, " "); // zato, ker imena v sql stolpcih niso s presledki
-	              // console.log(k);
-	              // $('#t-naslovna-vrstica').append(k);
 	              (0, _jquery2.default)('#t-naslovna-vrstica').append('<th class="table--header--th" id="th-' + k + '">' + k + '</th>');
 
 	              if (k == "Cena") {
@@ -10073,7 +10070,6 @@
 	            });
 
 	            var gumbCena = new _GumbCena2.default(function (res) {
-	              // console.log('prišlo' + res);
 	              if (res == 1) {
 	                that.distinctCena = 0;
 	              } else if (res == 0) {

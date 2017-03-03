@@ -88,9 +88,9 @@ this.dispatch = function(req, res) {
 
 io.sockets.on('connection', function (socket) {
             socket.on('sql', function (data) { //-------------cenik sql
-              // console.log (data);
+              console.log ('nekaj dobim ' + data.vpisanaVrednostSQL);
               var vrstic = 0;
-              Psql.Cenik(data.vpisanaVrednost, data.distinctCena, function(rezultatQ) {
+              Psql.Cenik(data.vpisanaVrednostSQL, data.distinctCena, function(rezultatQ) {
                 if (rezultatQ == 'konec') {
                   socket.emit('zadnjaVrstica', rezultatQ);
                   // console.log(vrstic);
@@ -110,7 +110,7 @@ io.sockets.on('connection', function (socket) {
 
             socket.on('projekti', function (data) {//-------------projekti sql
               Psql.Projekti(function(rezultatQ) {
-                console.log (rezultatQ);
+                // console.log (rezultatQ);
                 if (rezultatQ == 'konec') {
                   socket.emit('zadnjaVrstica', rezultatQ);
                 }
