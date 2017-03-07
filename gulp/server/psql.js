@@ -5,7 +5,7 @@ var pg = require('pg') ;
 //Psql.prototype.poizvedba = 
 function Cenik(vnos, kljukicaCena, callback) {
 	//console.log(vnos);
-	var rezultat = "nič";	
+	var rezultat = "nič";
 
 	var vnosArr = vnos;
 	// console.log(vnosArr);

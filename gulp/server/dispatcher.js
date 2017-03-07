@@ -89,16 +89,24 @@ this.dispatch = function(req, res) {
 io.sockets.on('connection', function (socket) {
             socket.on('sql', function (data) { //-------------cenik sql
               console.log ('nekaj dobim ' + data.vpisanaVrednostSQL);
+              // var socketPripravljen = 1;
               var vrstic = 0;
               Psql.Cenik(data.vpisanaVrednostSQL, data.distinctCena, function(rezultatQ) {
                 if (rezultatQ == 'konec') {
                   socket.emit('zadnjaVrstica', rezultatQ);
+                  // socketPripravljen=1;
                   // console.log(vrstic);
                   vrstic = 0;
                 }
                 else {
-                  socket.emit('vrnjeno', rezultatQ);
-                  vrstic += 1;
+                  // if (socketPripravljen == 1) {
+                  //   socketPripravljen=0;
+                    socket.emit('vrnjeno', rezultatQ);
+                    vrstic += 1;
+                  // } else {
+                    
+
+                  // }
                 }
                 rezultatQ = '';
               });

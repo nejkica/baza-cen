@@ -10050,9 +10050,10 @@
 
 	        var stVrstic = 0;
 	        var naborProjektov = [];
-
+	        console.log(vpisanaVrednostArr);
 	        that.socket.emit('sql', { vpisanaVrednostSQL: vpisanaVrednostArr, distinctCena: that.distinctCena });
 	        that.socket.on('vrnjeno', function (data) {
+
 	          stVrstic += 1;
 	          if (stVrstic == 1) {
 	            (0, _jquery2.default)('#t-naslovna-vrstica').empty();
@@ -10120,6 +10121,7 @@
 	          // console.log(rezultat);
 	        });
 	        that.socket.on('zadnjaVrstica', function () {
+	          console.log('zadnja vrstica prispela');
 	          (0, _jquery2.default)('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: ' + stVrstic);
 	          stVrstic = 0;
 	          naborProjektov = [];
