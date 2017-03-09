@@ -1,7 +1,10 @@
 var fs = require('fs');
 var Psql = require('./psql');
 var io = require('socket.io')(8888);
+// var EE = require('events');
 //var psql = new Psql();
+
+// var ee = new EE.EventEmitter();
 
 this.dispatch = function(req, res) {
 
@@ -87,61 +90,68 @@ this.dispatch = function(req, res) {
 };
 
 io.sockets.on('connection', function (socket) {
-            socket.on('sql', function (data) { //-------------cenik sql
-              console.log ('nekaj dobim ' + data.vpisanaVrednostSQL);
-              // var socketPripravljen = 1;
-              var vrstic = 0;
-              Psql.Cenik(data.vpisanaVrednostSQL, data.distinctCena, function(rezultatQ) {
-                if (rezultatQ == 'konec') {
-                  socket.emit('zadnjaVrstica', rezultatQ);
-                  // socketPripravljen=1;
-                  // console.log(vrstic);
-                  vrstic = 0;
-                }
-                else {
-                  // if (socketPripravljen == 1) {
-                  //   socketPripravljen=0;
-                    socket.emit('vrnjeno', rezultatQ);
-                    vrstic += 1;
-                  // } else {
-                    
+  // var socketPripravljen = 1;
+  socket.on('sql', function (data) { //-------------cenik sql
+    var dz = new Date();
+    var casZacetek = dz.getTime();
+    console.log ('Poizvedba: ' + data.vpisanaVrednostSQL);
+    var vrstic = 0;
+    // socketPripravljen = 0;
+    // console.log('socketPripravljen = 0 ...');
 
-                  // }
-                }
-                rezultatQ = '';
-              });
-            });
-
-            socket.on('end', function() {
-              socket.emit('end');
-            });
-
-            socket.on('projekti', function (data) {//-------------projekti sql
-              Psql.Projekti(function(rezultatQ) {
-                // console.log (rezultatQ);
-                if (rezultatQ == 'konec') {
-                  socket.emit('zadnjaVrstica', rezultatQ);
-                }
-                else {
-                  socket.emit('vrnjenoProjekti', rezultatQ);
-                }
-                rezultatQ = '';
-              });
-            });
-
-            socket.on('projekt', function (data) {//-------------projekt sql
-
-              Psql.Projekt(data.poizvedba, function(rezultatQ) {
-
-                if (rezultatQ == 'konec') {
-                  socket.emit('zadnjaVrstica', rezultatQ);
-
-                }
-                else {
-                  socket.emit('vrnjenoProjekt', rezultatQ);
-                }
-                rezultatQ = '';
-              });
-              // socket.disconnect(true);
-            });
+    Psql.Cenik(data.vpisanaVrednostSQL, data.distinctCena, function(rezultatQ) {
+      if (rezultatQ == 'konec') {
+        socket.emit('zadnjaVrstica', function(){
+          // if (pripravljen.ok){
+            var dk = new Date();
+            var casKonec = dk.getTime();
+            var casPoizvedbe = casKonec - casZacetek;
+            console.log('socketPripravljen = 1 ... ' + casPoizvedbe + ' ms');
+          // }
         });
+        vrstic = 0;
+        // console.log('socket odklenjen ... ');
+      }
+      else {
+          var dv = new Date();
+          var casVmesni = dv.getTime() - casZacetek;
+          console.log('pisem vrstico st: ' + vrstic + ' - čas ' + casVmesni + ' ms');
+          socket.emit('vrnjeno', rezultatQ);
+          vrstic += 1;
+      }
+      rezultatQ = '';
+    });
+  });
+
+  socket.on('end', function() {
+    socket.emit('end');
+  });
+
+  socket.on('projekti', function (data) {//-------------projekti sql
+    Psql.Projekti(function(rezultatQ) {
+      // console.log (rezultatQ);
+      if (rezultatQ == 'konec') {
+        socket.emit('zadnjaVrstica', rezultatQ);
+      }
+      else {
+        socket.emit('vrnjenoProjekti', rezultatQ);
+      }
+      rezultatQ = '';
+    });
+  });
+
+  socket.on('projekt', function (data) {//-------------projekt sql
+
+    Psql.Projekt(data.poizvedba, function(rezultatQ) {
+
+      if (rezultatQ == 'konec') {
+        socket.emit('zadnjaVrstica', rezultatQ);
+
+      } else {
+        socket.emit('vrnjenoProjekt', rezultatQ);
+      }
+      rezultatQ = '';
+    });
+    // socket.disconnect(true);
+  });
+});

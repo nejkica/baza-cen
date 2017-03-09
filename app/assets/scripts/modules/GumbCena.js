@@ -2,7 +2,7 @@ import $ from 'jquery';
 
 class GumbCena {
 	constructor (callback) {
-		this.gumbCena = $('#th-Cena');
+		this.gumbCena = $('#th-cenaEUR');
 		this.inputOpis = $("#inputOpis"); //ga rabim zaradi triggerja za stolpec cena - da mi da distinct ceno query
 		this.events();
 		this.cb = callback;

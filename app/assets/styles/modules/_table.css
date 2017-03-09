@@ -13,9 +13,9 @@
 		border: 1px solid black;
 	}
 
-	& tr:hover {
+	/*& tr:hover {
 		background-color: #f5f5f5;
-	}
+	}*/
 
 	&--header--th {
 		background-color: $tableOrange;
@@ -30,10 +30,84 @@
 
 	&--body--row td {
 		vertical-align: top;
+		height: 6em;
 		border: 1px solid rgba($mainGrey, .3);
 	}
 
-	& span {
+	&--highlight {
 		background-color: rgba($mainGreen, .3);
 	}
+
+	&--td--postavka {
+		position: relative;
+		display: block;
+		padding: 5px;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		background-color: #FFF;
+		opacity: .95;
+		/*margin: 2px 2px 10px 2px;*/
+		/*height: 1em;*/
+		/*overflow: hidden;*/
+	}
+
+	&--td--postavka-pokazi {
+		position: fixed;
+		padding: 100px 20px 5px 50px;
+		z-index: 99;
+	}
+
+	&--td--naslov {
+		position: relative;
+		display: block;
+		margin: 2px 2px 10px 2px;
+		height: 1em;
+		overflow: hidden;
+	}
+
+	&--td--naslov-pokazi {
+		position: relative;
+		float: left;
+		margin: 0;
+		height: auto;
+		/*left: 5%;*/
+		top: auto;
+		border: 1px solid green;
+		background-color: #FFF;
+		width: 90%;
+		max-height: 1000px;
+		z-index: 100;
+
+		height: auto;
+	}
+
+	&--td--opis {
+		position: relative;
+		display: block;
+		margin: 2px 2px 2px 10px;
+		font-weight: 500;
+		margin-top: 5px;
+		height: 3em;
+		overflow: hidden;
+	}
+
+	&--td--opis-pokazi {
+		/*display: inline;*/
+		position: relative;
+		padding: 5px;
+		float: left;
+		left: 5%;
+		top: auto;
+		border: 1px solid red;
+		background-color: #FFF;
+		width: 80%;
+		max-height: 1000px;
+		z-index: 100;
+
+		height: auto;
+	}
+
+
 }

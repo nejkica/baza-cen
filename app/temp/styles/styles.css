@@ -658,6 +658,8 @@ a {
 	border-collapse: collapse;
 	width: 100%;
 	margin-bottom: 15px;
+
+
 }
 
 .table--wrapper {
@@ -669,9 +671,9 @@ a {
   border: 1px solid black;
 }
 
-.table tr:hover {
-  background-color: #f5f5f5;
-}
+/*& tr:hover {
+		background-color: #f5f5f5;
+	}*/
 
 .table--header--th {
   background-color: #ffc53f;
@@ -685,11 +687,76 @@ a {
 
 .table--body--row td {
   vertical-align: top;
+  height: 6em;
   border: 1px solid rgba(216,216,216, .3);
 }
 
-.table span {
+.table--highlight {
   background-color: rgba(21,255,0, .3);
+}
+
+.table--td--postavka {
+  position: relative;
+  display: block;
+  padding: 5px;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #FFF;
+  opacity: .95;/*margin: 2px 2px 10px 2px;*//*height: 1em;*//*overflow: hidden;*/
+}
+
+.table--td--postavka-pokazi {
+  position: fixed;
+  padding: 100px 20px 5px 50px;
+  z-index: 99;
+}
+
+.table--td--naslov {
+  position: relative;
+  display: block;
+  margin: 2px 2px 10px 2px;
+  height: 1em;
+  overflow: hidden;
+}
+
+.table--td--naslov-pokazi {
+  position: relative;
+  float: left;
+  margin: 0;
+  height: auto;/*left: 5%;*/
+  top: auto;
+  border: 1px solid green;
+  background-color: #FFF;
+  width: 90%;
+  max-height: 1000px;
+  z-index: 100;
+  height: auto;
+}
+
+.table--td--opis {
+  position: relative;
+  display: block;
+  margin: 2px 2px 2px 10px;
+  font-weight: 500;
+  margin-top: 5px;
+  height: 3em;
+  overflow: hidden;
+}
+
+.table--td--opis-pokazi {/*display: inline;*/
+  position: relative;
+  padding: 5px;
+  float: left;
+  left: 5%;
+  top: auto;
+  border: 1px solid red;
+  background-color: #FFF;
+  width: 80%;
+  max-height: 1000px;
+  z-index: 100;
+  height: auto;
 }
 
 .nabor-projektov {
@@ -833,4 +900,27 @@ a {
 
 .modal__close:hover {
   color: #d59541;
+}
+
+.postavka {
+	position: fixed;
+	z-index: 5;
+	background-color: rgba(255, 255, 255, .94);
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	opacity: 0;
+	visibility: hidden;
+	-webkit-transform: scale(1.2);
+	        transform: scale(1.2);
+	-webkit-transition: all .3s ease-out;
+	transition: all .3s ease-out;
+}
+
+.postavka-pokazi {
+  opacity: 1;
+  visibility: visible;
+  -webkit-transform: scale(1);
+          transform: scale(1);
 }

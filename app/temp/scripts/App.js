@@ -9941,9 +9941,58 @@
 	    this.vpisZnaka();
 	    this.projektiAjax();
 	    this.projektAjax();
+	    this.events();
 	  }
 
 	  _createClass(Ajax, [{
+	    key: 'events',
+	    value: function events() {
+	      var that = this;
+	      (0, _jquery2.default)('#t-body').on('click', '.table--td--postavka', function () {
+	        that.pokaziPostavko(this);
+	      });
+
+	      (0, _jquery2.default)('.postavka').on('click', function () {
+	        (0, _jquery2.default)(this).toggleClass('postavka-pokazi');
+	      });
+	    }
+	  }, {
+	    key: 'pokaziPostavko',
+	    value: function pokaziPostavko(el) {
+	      var idParent = (0, _jquery2.default)(el).parent().attr('class').split('-');
+
+	      var zst = idParent[idParent.length - 1];
+	      var poz = (0, _jquery2.default)('.table--td--Poz-' + zst);
+	      var opisZnaslovi = (0, _jquery2.default)('.table--td--Opis_z_naslovi-' + zst);
+	      var em = (0, _jquery2.default)('.table--td--EM-' + zst);
+	      var cenav = (0, _jquery2.default)('.table--td--cenaV-' + zst);
+	      var fkor = (0, _jquery2.default)('.table--td--Fkor-' + zst);
+	      var projekt = (0, _jquery2.default)('.table--td--Projekt-' + zst);
+	      var cenaE = (0, _jquery2.default)('.table--td--cenaEUR-' + zst);
+
+	      (0, _jquery2.default)('.postavka').empty();
+	      (0, _jquery2.default)('.postavka').append('<div class="postavka-poz">' + poz.text() + '</div>');
+	      (0, _jquery2.default)('.postavka').append('<div class="postavka-opis">' + opisZnaslovi.text() + '</div>');
+	      (0, _jquery2.default)('.postavka').append('<div class="postavka-em">' + em.text() + '</div>');
+	      (0, _jquery2.default)('.postavka').append('<div class="postavka-cenav">' + cenav.text() + '</div>');
+	      (0, _jquery2.default)('.postavka').append('<div class="postavka-fkor">' + fkor.text() + '</div>');
+	      (0, _jquery2.default)('.postavka').append('<div class="postavka-projekt">' + projekt.text() + '</div>');
+	      (0, _jquery2.default)('.postavka').append('<div class="postavka-cenaE">' + cenaE.text() + '</div>');
+
+	      (0, _jquery2.default)('.postavka').toggleClass('postavka-pokazi');
+
+	      // $(el).children().each(function(){
+	      //   var klasa = $(this).attr('class').split(' ');
+	      //   // console.log(klasa[1]);
+	      //   if (klasa[1]) {
+	      //     klasa = klasa [1];
+	      //   } else {
+	      //     klasa = klasa + '-pokazi';
+	      //   }
+	      //   $(this).toggleClass(klasa);
+	      // });
+	    }
+	  }, {
 	    key: 'vpisZnaka',
 	    value: function vpisZnaka() {
 	      var zamik = new _InputDelay2.default();
@@ -10023,7 +10072,10 @@
 	    key: 'cenikAjax',
 	    value: function cenikAjax() {
 	      var that = this;
-	      var vpisanaVrednost = (0, _jquery2.default)(".site-header__elements__input__field").val().toLowerCase();
+	      var dz = new Date();
+	      var casZacetek = dz.getTime();
+
+	      var vpisanaVrednost = (0, _jquery2.default)(".site-header__elements__input__field").val();
 	      var stZnakovVpolju = vpisanaVrednost.length;
 	      // var vvVmesna = [];
 	      var vVArrNarekovaj = vpisanaVrednost.match(/\"(.*?)\"/gi); // array besed v narekovajih
@@ -10039,7 +10091,7 @@
 
 	      var vpisanaVrednostArr = vpisanaVrednost.split(" ");
 	      vpisanaVrednostArr = this.cleanArray(vpisanaVrednostArr.concat(vVArrNarekovaj)); // ... in jih tukaj dodamo
-	      console.log(vpisanaVrednostArr.length);
+	      // console.log(vpisanaVrednostArr.length);
 	      var dodajCeniStil = "rezultati__gumb-cena--vklopljen";
 
 	      if (stZnakovVpolju > 1) {
@@ -10051,9 +10103,12 @@
 	        var stVrstic = 0;
 	        var naborProjektov = [];
 	        console.log(vpisanaVrednostArr);
+	        //---------------------------------- socket.io -----------------------
 	        that.socket.emit('sql', { vpisanaVrednostSQL: vpisanaVrednostArr, distinctCena: that.distinctCena });
 	        that.socket.on('vrnjeno', function (data) {
-
+	          // var dv = new Date();
+	          // var casVmesni = dv.getTime() - casZacetek;
+	          // console.log('vrstica st '+ stVrstic + ' čas ' + casVmesni + ' ms');
 	          stVrstic += 1;
 	          if (stVrstic == 1) {
 	            (0, _jquery2.default)('#t-naslovna-vrstica').empty();
@@ -10064,9 +10119,9 @@
 	              k = k.replace(/_/g, " "); // zato, ker imena v sql stolpcih niso s presledki
 	              (0, _jquery2.default)('#t-naslovna-vrstica').append('<th class="table--header--th" id="th-' + k + '">' + k + '</th>');
 
-	              if (k == "Cena") {
-	                (0, _jquery2.default)('#th-Cena').empty();
-	                (0, _jquery2.default)('#th-Cena').append("<a href=# class=\"rezultati__gumb-cena " + dodajCeniStil + "\" id=\"gumb-cena\">" + k + "</a>");
+	              if (k == "cenaEUR") {
+	                (0, _jquery2.default)('#th-cenaEUR').empty();
+	                (0, _jquery2.default)('#th-cenaEUR').append("<a href=# class=\"rezultati__gumb-cena " + dodajCeniStil + "\" id=\"gumb-cena\">" + k + "</a>");
 	              }
 	            });
 
@@ -10097,16 +10152,26 @@
 	              for (var i = 0; i < vpisanaVrednostArr.length; i++) {
 	                var iskaniStr = vpisanaVrednostArr[i];
 
-	                var zamenjajZ = '<span>' + vpisanaVrednostArr[i] + '</span>';
+	                var zamenjajZ = '<span class="table--highlight">' + vpisanaVrednostArr[i] + '</span>';
 	                if (iskaniStr.length > 0) {
 	                  var iskaniStrRegEx = new RegExp(iskaniStr, "ig");
 	                  vrednost = vrednost.replace(iskaniStrRegEx, zamenjajZ);
 	                }
 	              }
-	            } else if (selTd.indexOf("Cena") >= 0 || selTd.indexOf("Fkor") >= 0 || selTd.indexOf("cenaEUR") >= 0) {
-	              // vrednost = vrednost.toFixed(2);
-	              vrednost = vrednost.toLocaleString(undefined, { minimumFractionDigits: 2 });
-	              (0, _jquery2.default)(selTd).css("text-align", "right");
+	            } else if (selTd.indexOf("cenaV") >= 0 || selTd.indexOf("Fkor") >= 0 || selTd.indexOf("cenaEUR") >= 0) {
+	              if (selTd.indexOf("cenaV") >= 0) {
+	                var vrednostValuta = vrednost.split(" ");
+	                vrednostValuta[0] = Number(vrednostValuta[0]);
+	                vrednost = vrednostValuta[0].toLocaleString(undefined, { minimumFractionDigits: 2 });
+	                vrednost = vrednost + ' ' + vrednostValuta[1];
+	              } else {
+	                vrednost = vrednost.toLocaleString(undefined, { minimumFractionDigits: 2 });
+	              }
+	              (0, _jquery2.default)(selTd).css({ "text-align": "right", "white-space": "nowrap" });
+
+	              if (selTd.indexOf("cenaEUR") >= 0) {
+	                vrednost = vrednost + " EUR";
+	              }
 	            }
 
 	            (0, _jquery2.default)(selTd).append(vrednost);
@@ -10120,13 +10185,19 @@
 	          }); //--- konec --- each item (zapis vsakega elementa JSON objekta za vsako vrstico )
 	          // console.log(rezultat);
 	        });
-	        that.socket.on('zadnjaVrstica', function () {
-	          console.log('zadnja vrstica prispela');
+
+	        that.socket.on('zadnjaVrstica', function (cb) {
+	          var dk = new Date();
+	          var casKonec = dk.getTime();
+	          var casNalaganja = casKonec - casZacetek;
+	          console.log('zadnja vrstica prispela... ' + casNalaganja + ' ms');
 	          (0, _jquery2.default)('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: ' + stVrstic);
 	          stVrstic = 0;
 	          naborProjektov = [];
+	          cb({ ok: true });
 	          // console.log('konec cl');
 	          that.socket.disconnect(true);
+
 	          that.socket = _socket2.default.connect('http://localhost:8888');
 	        });
 	      } else {
@@ -14055,7 +14126,7 @@
 		function GumbCena(callback) {
 			_classCallCheck(this, GumbCena);
 
-			this.gumbCena = (0, _jquery2.default)('#th-Cena');
+			this.gumbCena = (0, _jquery2.default)('#th-cenaEUR');
 			this.inputOpis = (0, _jquery2.default)("#inputOpis"); //ga rabim zaradi triggerja za stolpec cena - da mi da distinct ceno query
 			this.events();
 			this.cb = callback;
