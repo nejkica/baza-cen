@@ -7,7 +7,7 @@ var pg = require('pg') ;
 function Cenik(vnos, kljukicaCena, callback) {
 	//console.log(vnos);
 	var rezultat = "nič";
-	var limitRezultatov = 50;
+	var limitRezultatov = 200;
 	var vnosArr = vnos;
 	// console.log(vnosArr);
 	vnosArrSQL = [];
@@ -16,19 +16,19 @@ function Cenik(vnos, kljukicaCena, callback) {
 	var stolpciSQL = "\"cenik\".\"ID\", \"cenik\".\"Poz\", ('<div class=\"table--td--postavka\"><div class=\"table--td--naslov\">'||\"cenik\".\"N1\"||'-'||\"cenik\".\"N2\"||'-'||\"cenik\".\"N3\"||'-'||\"cenik\".\"N4\" ||'-'||\"cenik\".\"N5\"||'</div><div class=\"table--td--opis\">'||\"cenik\".\"Opis\"||'</div></div>') AS \"Opis_z_naslovi\",\"cenik\".\"EM\",(\"cenik\".\"Cena\" ||' '|| \"cenik\".\"Valuta\") AS \"cenaV\",\"cenik\".\"Fkor\",\"projektir12\".\"Projekt\",\"cenik\".\"cenaEUR\"";
 
 	if (kljukicaCena == 0){
-		sqlQ = "SELECT * FROM (SELECT " + stolpciSQL + " FROM cenik, projektir12 WHERE (\"cenik\".\"Projekt\" = \"projektir12\".\"IDp\") AND (";
+		sqlQ = "SELECT \"rezultat\".\"Poz\",\"rezultat\".\"Opis_z_naslovi\",\"rezultat\".\"EM\",\"rezultat\".\"cenaV\",\"rezultat\".\"cenaEUR\",\"rezultat\".\"Fkor\",\"rezultat\".\"Projekt\" FROM (SELECT " + stolpciSQL + " FROM cenik, projektir12 WHERE (\"cenik\".\"Projekt\" = \"projektir12\".\"IDp\") AND (";
 // ,\"cenik\".\"Kljuc\"
 //DISTINCT ON (regexp_replace(\"cenik\".\"Opis\", E\'[\\\n\\\r]+\', \'\', \'g\' ))
 		for (i=0; i < vnosArr.length; i++) {
 			if ( i > 0 ) {
 				sqlQ += " AND";
 			}
-			sqlQ += " ((\"Opis\") LIKE ($" + (i+1) + ") OR (\"N1\") LIKE ($" + (i+1) + ") OR (\"N2\") LIKE ($" + (i+1) + ") OR (\"N3\") LIKE ($" + (i+1) + ") OR (\"N4\") LIKE ($" + (i+1) + ") OR (\"N5\") LIKE ($" + (i+1) + ") OR (\"projektir12\".\"Projekt\") LIKE ($" + (i+1) + "))";
-
+			sqlQ += " (((\"tsOpis\") @@ plainto_tsquery($" + (i+1) + ")) )";
+//OR (\"projektir12\".\"Projekt\") LIKE ($" + (i+1) + ")
 			vnosArrSQL.push("%" + vnosArr[i] + "%");
 		}
 
-		sqlQ += ")) AS rezultat GROUP BY \"rezultat\".\"Opis_z_naslovi\", \"rezultat\".\"ID\",\"rezultat\".\"Projekt\", \"rezultat\".\"Poz\",\"rezultat\".\"EM\",\"rezultat\".\"cenaV\",\"rezultat\".\"Fkor\",\"rezultat\".\"cenaEUR\" LIMIT " + limitRezultatov;
+		sqlQ += ")) AS rezultat GROUP BY \"rezultat\".\"Opis_z_naslovi\",\"rezultat\".\"Projekt\", \"rezultat\".\"Poz\",\"rezultat\".\"EM\",\"rezultat\".\"cenaV\",\"rezultat\".\"Fkor\",\"rezultat\".\"cenaEUR\" LIMIT " + limitRezultatov;
 		//console.log(sqlQ);
 		// var sqlVnos = "%" + vnos + "%";
 	} else if (kljukicaCena == 1){
