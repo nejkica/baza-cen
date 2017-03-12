@@ -7,7 +7,7 @@ var pg = require('pg') ;
 function Cenik(vnos, kljukicaCena, callback) {
 	//console.log(vnos);
 	var rezultat = "nič";
-	var limitRezultatov = 200;
+	var limitRezultatov = 20;
 	var vnosArr = vnos;
 	// console.log(vnosArr);
 	vnosArrSQL = [];
@@ -16,15 +16,15 @@ function Cenik(vnos, kljukicaCena, callback) {
 	var stolpciSQL = "\"cenik\".\"ID\", \"cenik\".\"Poz\", ('<div class=\"table--td--postavka\"><div class=\"table--td--naslov\">'||\"cenik\".\"N1\"||'-'||\"cenik\".\"N2\"||'-'||\"cenik\".\"N3\"||'-'||\"cenik\".\"N4\" ||'-'||\"cenik\".\"N5\"||'</div><div class=\"table--td--opis\">'||\"cenik\".\"Opis\"||'</div></div>') AS \"Opis_z_naslovi\",\"cenik\".\"EM\",(\"cenik\".\"Cena\" ||' '|| \"cenik\".\"Valuta\") AS \"cenaV\",\"cenik\".\"Fkor\",\"projektir12\".\"Projekt\",\"cenik\".\"cenaEUR\"";
 
 	if (kljukicaCena == 0){
-		sqlQ = "SELECT \"rezultat\".\"Poz\",\"rezultat\".\"Opis_z_naslovi\",\"rezultat\".\"EM\",\"rezultat\".\"cenaV\",\"rezultat\".\"cenaEUR\",\"rezultat\".\"Fkor\",\"rezultat\".\"Projekt\" FROM (SELECT " + stolpciSQL + " FROM cenik, projektir12 WHERE (\"cenik\".\"Projekt\" = \"projektir12\".\"IDp\") AND (";
+		sqlQ = "SELECT \"rezultat\".\"Poz\",\"rezultat\".\"Opis_z_naslovi\",\"rezultat\".\"EM\",\"rezultat\".\"cenaV\",\"rezultat\".\"cenaEUR\",\"rezultat\".\"Fkor\" FROM (SELECT " + stolpciSQL + " FROM cenik, projektir12 WHERE (\"cenik\".\"Projekt\" = \"projektir12\".\"IDp\") AND (";
 // ,\"cenik\".\"Kljuc\"
 //DISTINCT ON (regexp_replace(\"cenik\".\"Opis\", E\'[\\\n\\\r]+\', \'\', \'g\' ))
 		for (i=0; i < vnosArr.length; i++) {
 			if ( i > 0 ) {
 				sqlQ += " AND";
 			}
-			sqlQ += " (((\"tsOpis\") @@ plainto_tsquery($" + (i+1) + ")) )";
-//OR (\"projektir12\".\"Projekt\") LIKE ($" + (i+1) + ")
+			sqlQ += " ((\"cenik\".\"N1\"||'-'||\"cenik\".\"N2\"||'-'||\"cenik\".\"N3\"||'-'||\"cenik\".\"N4\" ||'-'||\"cenik\".\"N5\"||\"cenik\".\"Opis\") LIKE ($" + (i+1) + ") OR (\"projektir12\".\"Projekt\") LIKE ($" + (i+1) + "))";
+
 			vnosArrSQL.push("%" + vnosArr[i] + "%");
 		}
 
