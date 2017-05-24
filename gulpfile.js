@@ -6,6 +6,7 @@ require('./gulp/tasks/modernizr');
 require('./gulp/tasks/build');
 require('./gulp/tasks/psql-test');
 require('./gulp/tasks/streznik.js');
-
+require('./gulp/tasks/kopiraj.js');
+require('./gulp/tasks/kopirajStreznik.js');
 
 

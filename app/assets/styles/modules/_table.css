@@ -34,9 +34,7 @@
 		border: 1px solid rgba($mainGrey, .3);
 	}
 
-	&--highlight {
-		background-color: rgba($mainGreen, .3);
-	}
+	
 
 	&--td--postavka {
 		position: relative;
@@ -110,4 +108,8 @@
 	}
 
 
+}
+
+.highlight {
+		background-color: rgba($mainGreen, .3);
 }

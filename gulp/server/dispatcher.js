@@ -54,7 +54,7 @@ this.dispatch = function(req, res) {
 
 
   if (req.url == "/") {
-    fs.readFile('app/index.html', function(error, content) {
+    fs.readFile('docs/index.html', function(error, content) {
       if (error) {
         console.log('pošiljam 500 - 1');
         serverError(500);
@@ -77,7 +77,7 @@ this.dispatch = function(req, res) {
 
     var drugi = req.url;
 
-    fs.readFile('app'+drugi, function(error, content) {
+    fs.readFile('docs'+drugi, function(error, content) {
       if (error) {
         console.log('pošiljam 500 - 4 ../../docs'+drugi);
 
@@ -106,7 +106,7 @@ io.sockets.on('connection', function (socket) {
             var dk = new Date();
             var casKonec = dk.getTime();
             var casPoizvedbe = casKonec - casZacetek;
-            console.log('socketPripravljen = 1 ... ' + casPoizvedbe + ' ms');
+            // console.log('socketPripravljen = 1 ... ' + casPoizvedbe + ' ms');
           // }
         });
         vrstic = 0;
@@ -115,7 +115,7 @@ io.sockets.on('connection', function (socket) {
       else {
           var dv = new Date();
           var casVmesni = dv.getTime() - casZacetek;
-          console.log('pisem vrstico st: ' + vrstic + ' - čas ' + casVmesni + ' ms');
+          // console.log('pisem vrstico st: ' + vrstic + ' - čas ' + casVmesni + ' ms');
           socket.emit('vrnjeno', rezultatQ);
           vrstic += 1;
       }
@@ -143,7 +143,7 @@ io.sockets.on('connection', function (socket) {
   socket.on('projekt', function (data) {//-------------projekt sql
 
     Psql.Projekt(data.poizvedba, function(rezultatQ) {
-
+      // console.log(rezultatQ);
       if (rezultatQ == 'konec') {
         socket.emit('zadnjaVrstica', rezultatQ);
 

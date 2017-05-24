@@ -13,7 +13,7 @@ class Ajax {
 		this.inputOpis = $("#inputOpis");
     this.inputOpis.focus();
 		this.izbraniProjekt = $(".modal__projekti");
-    this.socket = io.connect('http://localhost:8888');
+    this.socket = io.connect('http://192.168.112.200:8888');
 		this.vpisZnaka();
 		this.projektiAjax();
 		this.projektAjax();
@@ -54,18 +54,6 @@ class Ajax {
 
     $('.postavka').toggleClass('postavka-pokazi');
 
-
-
-    // $(el).children().each(function(){
-    //   var klasa = $(this).attr('class').split(' ');
-    //   // console.log(klasa[1]);
-    //   if (klasa[1]) {
-    //     klasa = klasa [1];
-    //   } else {
-    //     klasa = klasa + '-pokazi';
-    //   }
-    //   $(this).toggleClass(klasa);
-    // });
   }
 
 	vpisZnaka() {
@@ -109,7 +97,7 @@ class Ajax {
           // console.log('konec cl');
           n = 0;
           that.socket.disconnect(true);
-          that.socket = io.connect('http://localhost:8888');
+          that.socket = io.connect('http://192.168.112.200:8888');
       });
     }));
 	}
@@ -137,7 +125,7 @@ class Ajax {
       that.socket.on('zadnjaVrstica', function(){
           // console.log('konec cl');
           that.socket.disconnect(true);
-          that.socket = io.connect('http://localhost:8888');
+          that.socket = io.connect('http://192.168.112.200:8888');
       });
   	});
   }
@@ -174,6 +162,7 @@ class Ajax {
       var stVrstic = 0;
       var naborProjektov = [];
       console.log(vpisanaVrednostArr);
+
       //---------------------------------- socket.io -----------------------
       that.socket.emit('sql', { vpisanaVrednostSQL: vpisanaVrednostArr, distinctCena : that.distinctCena});
       that.socket.on('vrnjeno', function(data){
@@ -219,16 +208,9 @@ class Ajax {
           var selTd = '.table--td--' + Object.keys(data)[m] + '-' + stVrstic;
           
           if ((selTd.indexOf("Opis_z_naslovi") >= 0) || (selTd.indexOf("Projekt") >= 0)){ //tukaj highlight-amo iskani niz
+            // console.log(vpisanaVrednostArr);
             
-            for (var i=0; i < vpisanaVrednostArr.length; i++) {
-              var iskaniStr = vpisanaVrednostArr[i];
-
-               var zamenjajZ = '<span class="table--highlight">' + vpisanaVrednostArr[i] + '</span>';
-              if (iskaniStr.length > 0){
-                var iskaniStrRegEx = new RegExp(iskaniStr, "ig");
-                vrednost = vrednost.replace(iskaniStrRegEx, zamenjajZ);
-              }
-            }
+            // }
           } else if ((selTd.indexOf("cenaV") >= 0) || (selTd.indexOf("Fkor") >= 0) || (selTd.indexOf("cenaEUR") >= 0)) {
             if(selTd.indexOf("cenaV") >= 0) {
               var vrednostValuta = vrednost.split(" ");
@@ -264,13 +246,16 @@ class Ajax {
         var casNalaganja = casKonec - casZacetek;
         console.log('zadnja vrstica prispela... ' + casNalaganja + ' ms' );
         $('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: ' + stVrstic);
+        $('[class^=table--td--naslov]').highlight(vpisanaVrednostArr);
+        $('[class^=table--td--opis]').highlight(vpisanaVrednostArr);
+        $('[class^=table--td--Projekt]').highlight(vpisanaVrednostArr);
         stVrstic = 0;
         naborProjektov = [];
         cb({ok:true});
         // console.log('konec cl');
         that.socket.disconnect(true);
 
-        that.socket = io.connect('http://localhost:8888');
+        that.socket = io.connect('http://192.168.112.200:8888');
       });
       
   		

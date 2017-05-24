@@ -7,8 +7,8 @@ gulp.task('povezi', function() {
 	var config = {
 		user: 'postgres', //env var: PGUSER 
 		database: 'BazaCenikov', //env var: PGDATABASE 
-		password: 'kookaburra@72', //env var: PGPASSWORD 
-		host: 'kookaburra.si', // Server hosting the postgres database 
+		password: 'postgres', //env var: PGPASSWORD 
+		host: 'localhost', // Server hosting the postgres database 
 		port: 5432, //env var: PGPORT 
 		max: 10, // max number of clients in the pool 
 		idleTimeoutMillis: 30000 // how long a client is allowed to remain idle before being closed 

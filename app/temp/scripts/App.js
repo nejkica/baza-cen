@@ -62,11 +62,16 @@
 
 	var _Modal2 = _interopRequireDefault(_Modal);
 
+	var _jQueryHighlight = __webpack_require__(64);
+
+	var _jQueryHighlight2 = _interopRequireDefault(_jQueryHighlight);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var ajax = new _Ajax2.default();
 	var klikNaProjekt = new _KlikNaProjekt2.default();
 	var modal = new _Modal2.default();
+	// var highlight = new Highlight();
 
 /***/ },
 /* 1 */
@@ -9937,7 +9942,7 @@
 	    this.inputOpis = (0, _jquery2.default)("#inputOpis");
 	    this.inputOpis.focus();
 	    this.izbraniProjekt = (0, _jquery2.default)(".modal__projekti");
-	    this.socket = _socket2.default.connect('http://localhost:8888');
+	    this.socket = _socket2.default.connect('http://192.168.112.200:8888');
 	    this.vpisZnaka();
 	    this.projektiAjax();
 	    this.projektAjax();
@@ -9980,17 +9985,6 @@
 	      (0, _jquery2.default)('.postavka').append('<div class="postavka-cenaE">' + cenaE.text() + '</div>');
 
 	      (0, _jquery2.default)('.postavka').toggleClass('postavka-pokazi');
-
-	      // $(el).children().each(function(){
-	      //   var klasa = $(this).attr('class').split(' ');
-	      //   // console.log(klasa[1]);
-	      //   if (klasa[1]) {
-	      //     klasa = klasa [1];
-	      //   } else {
-	      //     klasa = klasa + '-pokazi';
-	      //   }
-	      //   $(this).toggleClass(klasa);
-	      // });
 	    }
 	  }, {
 	    key: 'vpisZnaka',
@@ -10035,7 +10029,7 @@
 	          // console.log('konec cl');
 	          n = 0;
 	          that.socket.disconnect(true);
-	          that.socket = _socket2.default.connect('http://localhost:8888');
+	          that.socket = _socket2.default.connect('http://192.168.112.200:8888');
 	        });
 	      });
 	    }
@@ -10064,7 +10058,7 @@
 	        that.socket.on('zadnjaVrstica', function () {
 	          // console.log('konec cl');
 	          that.socket.disconnect(true);
-	          that.socket = _socket2.default.connect('http://localhost:8888');
+	          that.socket = _socket2.default.connect('http://192.168.112.200:8888');
 	        });
 	      });
 	    }
@@ -10103,6 +10097,7 @@
 	        var stVrstic = 0;
 	        var naborProjektov = [];
 	        console.log(vpisanaVrednostArr);
+
 	        //---------------------------------- socket.io -----------------------
 	        that.socket.emit('sql', { vpisanaVrednostSQL: vpisanaVrednostArr, distinctCena: that.distinctCena });
 	        that.socket.on('vrnjeno', function (data) {
@@ -10146,18 +10141,10 @@
 	            (0, _jquery2.default)(idVrstice).append('<td class="table--td--' + trenutniKey + '-' + stVrstic + '"></td>');
 	            var selTd = '.table--td--' + Object.keys(data)[m] + '-' + stVrstic;
 
-	            if (selTd.indexOf("Opis_z_naslovi") >= 0 || selTd.indexOf("Projekt") >= 0) {
-	              //tukaj highlight-amo iskani niz
+	            if (selTd.indexOf("Opis_z_naslovi") >= 0 || selTd.indexOf("Projekt") >= 0) {//tukaj highlight-amo iskani niz
+	              // console.log(vpisanaVrednostArr);
 
-	              for (var i = 0; i < vpisanaVrednostArr.length; i++) {
-	                var iskaniStr = vpisanaVrednostArr[i];
-
-	                var zamenjajZ = '<span class="table--highlight">' + vpisanaVrednostArr[i] + '</span>';
-	                if (iskaniStr.length > 0) {
-	                  var iskaniStrRegEx = new RegExp(iskaniStr, "ig");
-	                  vrednost = vrednost.replace(iskaniStrRegEx, zamenjajZ);
-	                }
-	              }
+	              // }
 	            } else if (selTd.indexOf("cenaV") >= 0 || selTd.indexOf("Fkor") >= 0 || selTd.indexOf("cenaEUR") >= 0) {
 	              if (selTd.indexOf("cenaV") >= 0) {
 	                var vrednostValuta = vrednost.split(" ");
@@ -10192,13 +10179,16 @@
 	          var casNalaganja = casKonec - casZacetek;
 	          console.log('zadnja vrstica prispela... ' + casNalaganja + ' ms');
 	          (0, _jquery2.default)('#stVrnjenihRezultatov').text('Št. vrnjenih rezultatov: ' + stVrstic);
+	          (0, _jquery2.default)('[class^=table--td--naslov]').highlight(vpisanaVrednostArr);
+	          (0, _jquery2.default)('[class^=table--td--opis]').highlight(vpisanaVrednostArr);
+	          (0, _jquery2.default)('[class^=table--td--Projekt]').highlight(vpisanaVrednostArr);
 	          stVrstic = 0;
 	          naborProjektov = [];
 	          cb({ ok: true });
 	          // console.log('konec cl');
 	          that.socket.disconnect(true);
 
-	          that.socket = _socket2.default.connect('http://localhost:8888');
+	          that.socket = _socket2.default.connect('http://192.168.112.200:8888');
 	        });
 	      } else {
 	        (0, _jquery2.default)('#t-body').empty();
@@ -23003,6 +22993,167 @@
 	}();
 
 	exports.default = Modal;
+
+/***/ },
+/* 64 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
+	 * jQuery Highlight plugin
+	 *
+	 * Based on highlight v3 by Johann Burkard
+	 * http://johannburkard.de/blog/programming/javascript/highlight-javascript-text-higlighting-jquery-plugin.html
+	 *
+	 * Code a little bit refactored and cleaned (in my humble opinion).
+	 * Most important changes:
+	 *  - has an option to highlight only entire words (wordsOnly - false by default),
+	 *  - has an option to be case sensitive (caseSensitive - false by default)
+	 *  - highlight element tag and class names can be specified in options
+	 *
+	 * Usage:
+	 *   // wrap every occurrence of text 'lorem' in content
+	 *   // with <span class='highlight'> (default options)
+	 *   $('#content').highlight('lorem');
+	 *
+	 *   // search for and highlight more terms at once
+	 *   // so you can save some time on traversing DOM
+	 *   $('#content').highlight(['lorem', 'ipsum']);
+	 *   $('#content').highlight('lorem ipsum');
+	 *
+	 *   // search only for entire word 'lorem'
+	 *   $('#content').highlight('lorem', { wordsOnly: true });
+	 *
+	 *   // search only for the entire word 'C#'
+	 *   // and make sure that the word boundary can also
+	 *   // be a 'non-word' character, as well as a regex latin1 only boundary:
+	 *   $('#content').highlight('C#', { wordsOnly: true , wordsBoundary: '[\\b\\W]' });
+	 *
+	 *   // don't ignore case during search of term 'lorem'
+	 *   $('#content').highlight('lorem', { caseSensitive: true });
+	 *
+	 *   // wrap every occurrence of term 'ipsum' in content
+	 *   // with <em class='important'>
+	 *   $('#content').highlight('ipsum', { element: 'em', className: 'important' });
+	 *
+	 *   // remove default highlight
+	 *   $('#content').unhighlight();
+	 *
+	 *   // remove custom highlight
+	 *   $('#content').unhighlight({ element: 'em', className: 'important' });
+	 *
+	 *
+	 * Copyright (c) 2009 Bartek Szopka
+	 *
+	 * Licensed under MIT license.
+	 *
+	 */
+
+	(function (factory) {
+	    if (true) {
+	        // AMD. Register as an anonymous module.
+	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    } else if (typeof exports === 'object') {
+	        // Node/CommonJS
+	        factory(require('jquery'));
+	    } else {
+	        // Browser globals
+	        factory(jQuery);
+	    }
+	}(function (jQuery) {
+	    jQuery.extend({
+	        highlight: function (node, re, nodeName, className, callback) {
+	            if (node.nodeType === 3) {
+	                var match = node.data.match(re);
+	                if (match) {
+	                    // The new highlight Element Node
+	                    var highlight = document.createElement(nodeName || 'span');
+	                    highlight.className = className || 'highlight';
+	                    // Note that we use the captured value to find the real index
+	                    // of the match. This is because we do not want to include the matching word boundaries
+	                    var capturePos = node.data.indexOf( match[1] , match.index );
+
+	                    // Split the node and replace the matching wordnode
+	                    // with the highlighted node
+	                    var wordNode = node.splitText(capturePos);
+	                    wordNode.splitText(match[1].length);
+
+	                    var wordClone = wordNode.cloneNode(true);
+	                    highlight.appendChild(wordClone);
+	                    wordNode.parentNode.replaceChild(highlight, wordNode);
+	                    if (typeof callback == 'function') {
+	                        callback(highlight)   
+	                    }
+	                    return 1; //skip added node in parent
+	                }
+	            } else if ((node.nodeType === 1 && node.childNodes) && // only element nodes that have children
+	                    !/(script|style)/i.test(node.tagName) && // ignore script and style nodes
+	                    !(node.tagName === nodeName.toUpperCase() && node.className === className)) { // skip if already highlighted
+	                for (var i = 0; i < node.childNodes.length; i++) {
+	                    i += jQuery.highlight(node.childNodes[i], re, nodeName, className, callback);
+	                }
+	            }
+	            return 0;
+	        }
+	    });
+
+	    jQuery.fn.unhighlight = function (options) {
+	        var settings = {
+	          className: 'highlight',
+	          element: 'span'
+	        };
+
+	        jQuery.extend(settings, options);
+
+	        return this.find(settings.element + '.' + settings.className).each(function () {
+	            var parent = this.parentNode;
+	            parent.replaceChild(this.firstChild, this);
+	            parent.normalize();
+	        }).end();
+	    };
+
+	    jQuery.fn.highlight = function (words, options, callback) {
+	        var settings = {
+	          className: 'highlight',
+	          element: 'span',
+	          caseSensitive: false,
+	          wordsOnly: false,
+	          wordsBoundary: '\\b'
+	        };
+
+	        jQuery.extend(settings, options);
+
+	        if (typeof words === 'string') {
+	          words = [words];
+	        }
+	        words = jQuery.grep(words, function(word, i){
+	          return word != '';
+	        });
+	        words = jQuery.map(words, function(word, i) {
+	          return word.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+	        });
+
+	        if (words.length === 0) {
+	          return this;
+	        };
+
+	        var flag = settings.caseSensitive ? '' : 'i';
+	        // The capture parenthesis will make sure we can match
+	        // only the matching word
+	        var pattern = '(' + words.join('|') + ')';
+	        if (settings.wordsOnly) {
+	            pattern =
+	                (settings.wordsBoundaryStart || settings.wordsBoundary) +
+	                pattern +
+	                (settings.wordsBoundaryEnd || settings.wordsBoundary);
+	        }
+	        var re = new RegExp(pattern, flag);
+
+	        return this.each(function () {
+	            jQuery.highlight(this, re, settings.element, settings.className, callback);
+	        });
+	    };
+	}));
+
 
 /***/ }
 /******/ ]);

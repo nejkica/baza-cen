@@ -6,7 +6,7 @@ var auth = require('http-auth');
 
 var basic = auth.basic({
     realm: "riko",
-    file: __dirname + "/../../.passwd"
+    file: __dirname + "/.passwd"
 });
 
 //require custom dispatcher
@@ -34,7 +34,7 @@ http.createServer(basic, function (req, res) {
       res.writeHead(500);
       res.end('Internal Server Error');
     }
-  }).listen(80, "localhost", function() {
+  }).listen(80, "192.168.112.200", function() {
     //runs when our server is created
     console.log('Server running at http://localhost:80');
   });

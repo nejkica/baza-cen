@@ -5,7 +5,7 @@ usemin = require('gulp-usemin'),
 rev = require('gulp-rev'),
 cssnano = require('gulp-cssnano'),
 uglify = require('gulp-uglify'),
-browserSync = require('browser-sync').create() ;
+browserSync = require('browser-sync').create();
 
 gulp.task('previewDocs', function() {
 	browserSync.init({
@@ -29,11 +29,11 @@ gulp.task('copyGeneralFiles', ['deleteDocsFolder'], function() {
 		'!./app/assets/scripts/**',
 		'!./app/temp',
 		'!./app/temp/**'
-	]
+	];
 
 	return gulp.src(pathsToCopy)
-		.pipe(gulp.dest("./docs"))
-})
+		.pipe(gulp.dest("./docs"));
+});
 
 
 gulp.task('useminTrigger', ['deleteDocsFolder'], function() {
@@ -44,15 +44,15 @@ gulp.task('usemin', ['styles', 'scripts'], function() {
 	return gulp.src("./app/index.html")
 	.pipe(usemin({
 		css: [function() {
-			return rev()
+			return rev();
 			}, 
 			function() {
-			return cssnano()
+			return cssnano();
 			}
 			],
-		js: [function() {return rev()}, function() {return uglify()}]
+		js: [function() {return rev();}, function() {return uglify();}]
 	}))
 	.pipe(gulp.dest("./docs"));
 });
 
-gulp.task('build', ['deleteDocsFolder', 'copyGeneralFiles', 'useminTrigger']);
+gulp.task('build', ['deleteDocsFolder', 'copyGeneralFiles', 'useminTrigger', 'kopiraj']);
