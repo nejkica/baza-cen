@@ -14,6 +14,7 @@ node_modules/
 docs
 .passwd
 
+
 # OS or Editor folders
 .DS_Store
 Thumbs.db
