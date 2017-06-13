@@ -12,6 +12,7 @@
 node_modules/
 .tmp/
 docs
+.passwd
 
 # OS or Editor folders
 .DS_Store
@@ -28,3 +29,4 @@ nbproject
 .komodotools
 _notes
 dwsync.xml
+.jshintrc
