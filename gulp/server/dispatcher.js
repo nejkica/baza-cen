@@ -63,29 +63,52 @@ this.dispatch = function(req, res) {
       }
     });
 
-  } else if (parts[1]=='favicon.ico') { //to je zato, da se znebimo opozorila v konzoli o missing favicon.ico
-        try {
-          renderFavi();
-        
-        } catch (err) {
-          //handle errors gracefully
-          console.log('pošiljam 500 - 3 - favicon');
-          serverError(500);
-      }
-    
-  } else {
-
-    var drugi = req.url;
-
-    fs.readFile('docs'+drugi, function(error, content) {
+  } else if (req.url == "/VK") {
+    fs.readFile('../VodovodKoroska/docs/index.html', function(error, content) {
       if (error) {
-        console.log('pošiljam 500 - 4 ../../docs'+drugi);
+        console.log('pošiljam 500 - 2');
+        serverError(500);
+      } else {
+        renderHtml(content);
+      }
+    });
+
+  } else if (parts[1]=='VodovodKoroska') { //to je zato, da se znebimo opozorila v konzoli o missing favicon.ico
+    var reqUrl = req.url;
+
+    fs.readFile('..' + reqUrl, function(error, content) {
+      if (error) {
+        console.log('pošiljam 500 - 4 ../../docs'+reqUrl);
 
         serverError(500);
       } else {
         renderCSS(content);
       }
     });
+    
+  } else if (parts[1]=='favicon.ico') { //to je zato, da se znebimo opozorila v konzoli o missing favicon.ico
+        try {
+          renderFavi();
+        
+        } catch (err) {
+          //handle errors gracefully
+          console.log('pošiljam 500 - 4 - favicon');
+          serverError(500);
+      }
+    
+  } else {
+
+      var drugi = req.url;
+
+      fs.readFile('docs'+drugi, function(error, content) {
+        if (error) {
+          console.log('pošiljam 500 - 4 ../../docs'+drugi);
+
+          serverError(500);
+        } else {
+          renderCSS(content);
+        }
+      });
   }
 };
 
@@ -154,4 +177,67 @@ io.sockets.on('connection', function (socket) {
     });
     // socket.disconnect(true);
   });
+
+  socket.on('vodovodKoroska', function (data) {//-------------projekt sql
+    // console.log(data);
+
+    var obcina = data.sklop.split('.')[0];
+
+    Psql.vodovodKoroska(data.sklop, '', data.tekst, function(rezultatQ){
+      // console.log(rezultatQ);
+      if (rezultatQ == 'konec') {
+        socket.emit('vodovodKoroskaZadnjaVrstica', rezultatQ);
+        
+      } else if (rezultatQ.razlaga) {
+        socket.emit('vodovodKoroskaMaxPodobnost', rezultatQ.razlaga);
+        // console.log(rezultatQ.razlaga);
+      } else {
+        socket.emit('vodovodKoroskaVrnjeno', rezultatQ);
+        // console.log(rezultatQ);
+        
+      }
+      rezultatQ = '';
+
+    });
+
+    Psql.vodovodKoroska(obcina, data.sklop + '%', data.tekst, function(rezultatQ){
+      
+      if (rezultatQ == 'konec') {
+        socket.emit('vodovodKoroskaZadnjaVrsticaObcina', rezultatQ);
+        
+      } else if (rezultatQ.razlaga) {
+        socket.emit('vodovodKoroskaMaxPodobnostObcina', rezultatQ.razlaga);
+      } else {
+        socket.emit('vodovodKoroskaObcinaVrnjeno', rezultatQ);
+        // console.log(rezultatQ);
+      }
+      rezultatQ = '';
+
+    });
+
+    Psql.vodovodKoroska('', obcina + '%', data.tekst, function(rezultatQ){
+      // console.log(rezultatQ);
+      if (rezultatQ == 'konec') {
+        socket.emit('vodovodKoroskaZadnjaVrsticaProjekt', rezultatQ);
+        
+      } else if (rezultatQ.razlaga) {
+        socket.emit('vodovodKoroskaMaxPodobnostProjekt', rezultatQ.razlaga);
+      } else {
+        socket.emit('vodovodKoroskaProjektVrnjeno', rezultatQ);
+        // console.log(rezultatQ);
+        
+      }
+      rezultatQ = '';
+
+    });
+
+
+
+  });
+
+  socket.on('zapriSejo', function () {//-------------projekt sql
+
+    socket.disconnect();
+  });
+     
 });

@@ -70,6 +70,41 @@ function Projekt(vnos, callback) {
 	});
 }
 
+function vodovodKoroska(sklop, NOTsklop, tekst, callback) {
+	
+	var rezultat = "nič";	
+
+	// console.log('vars: ' + sklop + tekst);
+
+	var sqlQ = "SELECT wbs, opis, replace(cena_pon_brez_pop::text, '.', ',') AS cena, round(similarity(opis, '" + tekst + "')::numeric ,2) AS podobnost FROM expert WHERE opis % '" + tekst + "' AND wbs LIKE '" + sklop + "%' AND wbs NOT LIKE '" + NOTsklop + "' ORDER BY podobnost DESC LIMIT 10";
+
+	let sqlqMaxPodobnost = "SELECT MAX(round(similarity(opis, '" + tekst + "')::numeric ,2)) FROM expert WHERE opis % '" + tekst + "' AND wbs LIKE '" + sklop + "%' AND wbs NOT LIKE '" + NOTsklop + "'";
+
+	let sqlMaxCena = "SELECT replace(MAX(cena_pon_brez_pop)::text, '.', ',') FROM expert WHERE opis % '" + tekst + "' AND wbs LIKE '" + sklop + "%' AND wbs NOT LIKE '" + NOTsklop + "' AND similarity(opis, '" + tekst + "') > 0.5";
+
+	let povpCena = "SELECT replace(round(AVG(cena_pon_brez_pop)::numeric, 2)::text, '.', ',') FROM expert WHERE opis % '" + tekst + "' AND wbs LIKE '" + sklop + "%' AND wbs NOT LIKE '" + NOTsklop + "' AND similarity(opis, '" + tekst + "') = 1";
+
+	let razlagaSQL = "SELECT (" + sqlqMaxPodobnost + ") as max_podobnost, (" + sqlMaxCena + ") as max_cena, (" + povpCena + ") AS povp_cena ";
+// tle sem končal - naredi novo poizvedbo za določitev treh količin .. max cena, podobnost, avg cena ...
+	VodovodKoroskaQuery(sqlQ, function(rezultat) {
+		// console.log('tle: ' + rezultat);
+		callback(rezultat);
+	});
+
+	VodovodKoroskaQuery(razlagaSQL, function(rezultat) {
+		let razlaga = {};
+
+		Object.assign(razlaga, rezultat);
+
+		if (rezultat == 'konec') {
+			callback(rezultat);
+		} else {
+			callback({razlaga: razlaga});
+			// callback({maxPodobnost: rezultat.max_podobnost});
+		}
+	});
+}
+
 
 
 function Query (sqlSt, arrSpremenljivk, cb) {
@@ -109,6 +144,45 @@ function Query (sqlSt, arrSpremenljivk, cb) {
 	});
 }
 
+function VodovodKoroskaQuery (sqlSt, cb) {
+	var config = {
+		user: 'postgres', 				//env var: PGUSER 
+		database: 'vodovod_koroska', 		//env var: PGDATABASE 
+		password: 'postgres', 		//env var: PGPASSWORD 
+		host: 'localhost', 			// Server hosting the postgres database 
+		port: 5432, 					//env var: PGPORT 
+		max: 10, 						// max number of clients in the pool 
+		idleTimeoutMillis: 30000 		// how long a client is allowed to remain idle before being closed 
+	};
+
+
+	var pool = new pg.Pool(config);
+	pool.connect(function (err, client, done) {	
+		if (err) {
+			return console.error('napaka pri iskanju client iz pool-a', err);
+		}
+	// console.log(arrSpremenljivk);
+	var kveri = client.query(sqlSt);
+	
+	kveri.on('row', function(row){
+		// console.log('tukaj: ' + row);
+		cb(row);
+	});
+
+	kveri.on('end', function(){
+		done();
+		cb('konec');
+	});
+
+	pool.on('error', function(error) {
+      console.log(error);
+    });
+
+
+	});
+}
+
 exports.Cenik = Cenik;
 exports.Projekti = Projekti;
 exports.Projekt = Projekt;
+exports.vodovodKoroska = vodovodKoroska;
