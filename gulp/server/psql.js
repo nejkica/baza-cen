@@ -76,7 +76,7 @@ function vodovodKoroska(sklop, NOTsklop, tekst, callback) {
 
 	// console.log('vars: ' + sklop + tekst);
 
-	var sqlQ = "SELECT wbs, opis, replace(cena_pon_brez_pop::text, '.', ',') AS cena, round(similarity(opis, '" + tekst + "')::numeric ,2) AS podobnost FROM expert WHERE opis % '" + tekst + "' AND wbs LIKE '" + sklop + "%' AND wbs NOT LIKE '" + NOTsklop + "' ORDER BY podobnost DESC LIMIT 10";
+	var sqlQ = "SELECT wbs, opis, kol, em, replace(cena_pon_brez_pop::text, '.', ',') AS cena, round(similarity(opis, '" + tekst + "')::numeric ,2) AS podobnost FROM expert WHERE opis % '" + tekst + "' AND wbs LIKE '" + sklop + "%' AND wbs NOT LIKE '" + NOTsklop + "' ORDER BY podobnost DESC LIMIT 10";
 
 	let sqlqMaxPodobnost = "SELECT MAX(round(similarity(opis, '" + tekst + "')::numeric ,2)) FROM expert WHERE opis % '" + tekst + "' AND wbs LIKE '" + sklop + "%' AND wbs NOT LIKE '" + NOTsklop + "'";
 
